@@ -1,0 +1,860 @@
+/* ========================================================
+   PriDesk — css/terlambat.css
+   Premium Overdue Tasks Page
+   Theme: Urgent but Clean (Rose/Red accents)
+   ======================================================== */
+
+:root {
+  --sidebar-w: 272px;
+  --rose: #f43f5e;
+  --rose-dark: #e11d48;
+  --rose-light: #fb7185;
+}
+
+/* ---------- BODY / SHELL ---------- */
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: #f8fafc;
+  position: relative;
+}
+.app-shell { position: relative; z-index: 1; }
+
+/* ---------- AMBIENT BACKGROUND (Rose-tinted) ---------- */
+.bg-decoration {
+  position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+}
+.bg-orb {
+  position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.45;
+  animation: floatOrb 20s ease-in-out infinite;
+}
+/* Orb 1: biru tetap ada untuk netralitas */
+.bg-orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, #fecdd3 0%, transparent 70%); top: -200px; left: -100px; }
+.bg-orb-2 { width: 420px; height: 420px; background: radial-gradient(circle, #fda4af 0%, transparent 70%); bottom: -180px; right: 10%; animation-delay: -7s; opacity: 0.35; }
+.bg-orb-3 { width: 360px; height: 360px; background: radial-gradient(circle, #ddd6fe 0%, transparent 70%); top: 40%; right: -120px; animation-delay: -14s; }
+.bg-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(15,23,42,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15,23,42,0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+@keyframes floatOrb {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(40px,-30px) scale(1.08); }
+  66%     { transform: translate(-30px,20px) scale(0.95); }
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- SIDEBAR (Dark Premium) ---------- */
+.sidebar {
+  width: var(--sidebar-w);
+  background: linear-gradient(180deg, #0b1220 0%, #0f172a 45%, #0b1220 100%);
+  display: flex; flex-direction: column; flex-shrink: 0;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  position: relative; overflow: hidden;
+}
+.sidebar-glow {
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.6), rgba(139,92,246,0.4), transparent);
+}
+.brand-section { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.brand-logo-mark {
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+  box-shadow: 0 4px 14px rgba(59,130,246,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.section-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.14em; color: #64748b; padding-left: 12px; padding-right: 12px;
+}
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
+
+.sidebar-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  font-size: 13.5px; font-weight: 600; color: #94a3b8;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  position: relative; border: none; background: transparent; text-decoration: none;
+}
+.sidebar-nav-item .nav-icon { color: #64748b; transition: color .2s, transform .2s; }
+.sidebar-nav-item .nav-label { flex: 1; text-align: left; }
+.sidebar-nav-item:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+.sidebar-nav-item:hover .nav-icon { color: #60a5fa; transform: translateX(1px); }
+.sidebar-nav-item.active {
+  background: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(139,92,246,0.14) 100%);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(96,165,250,0.22);
+}
+.sidebar-nav-item.active::before {
+  content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; border-radius: 999px;
+  background: linear-gradient(180deg, #60a5fa, #a78bfa);
+  box-shadow: 0 0 12px rgba(96,165,250,0.85);
+}
+.sidebar-nav-item.active .nav-icon { color: #93c5fd; }
+
+/* Overdue active state override — rose gradient */
+.sidebar-nav-overdue.active {
+  background: linear-gradient(135deg, rgba(244,63,94,0.22) 0%, rgba(225,29,72,0.16) 100%);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(251,113,133,0.3);
+}
+.sidebar-nav-overdue.active::before {
+  background: linear-gradient(180deg, #fb7185, #f43f5e);
+  box-shadow: 0 0 12px rgba(244,63,94,0.85);
+}
+.sidebar-nav-overdue.active .nav-icon { color: #fda4af; }
+.sidebar-nav-overdue:hover { background: rgba(244,63,94,0.08); color: #fda4af; }
+.sidebar-nav-overdue:hover .nav-icon { color: #fb7185; }
+
+.sidebar-nav-danger { color: #fda4af; }
+.sidebar-nav-danger:hover { background: rgba(244,63,94,0.1); color: #fecdd3; }
+
+.sidebar-badge {
+  background: rgba(255,255,255,0.08); color: #cbd5e1;
+  font-size: 10.5px; font-weight: 700; padding: 2px 8px;
+  border-radius: 999px; min-width: 22px; text-align: center; line-height: 1.4;
+}
+.sidebar-nav-item.active .sidebar-badge {
+  background: rgba(96,165,250,0.25); color: #dbeafe;
+}
+.sidebar-nav-overdue.active .sidebar-badge-rose {
+  background: rgba(251,113,133,0.3); color: #ffe4e6;
+}
+.sidebar-badge:empty { display: none; }
+.sidebar-badge-rose { background: rgba(244,63,94,0.15); color: #fda4af; }
+.sidebar-badge-emerald { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+.sidebar-footer { border-top: 1px solid rgba(255,255,255,0.05); }
+
+/* ---------- MOBILE ---------- */
+.mobile-header {
+  display: none; align-items: center; gap: 12px; padding: 12px 16px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky; top: 0; z-index: 50;
+}
+.mobile-overlay {
+  position: fixed; inset: 0; background: rgba(15,23,42,0.55);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  z-index: 90; animation: fadeIn 0.2s ease;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 10px 18px; border-radius: 11px;
+  font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em;
+  cursor: pointer; border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  white-space: nowrap; font-family: inherit;
+}
+.btn-sm { padding: 7px 12px; font-size: 12.5px; border-radius: 9px; }
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 55%, #4f46e5 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 16px -4px rgba(37,99,235,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px -6px rgba(37,99,235,0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-secondary {
+  background: #ffffff; color: #334155; border-color: #e2e8f0;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+}
+.btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+.btn-danger {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #ffffff; box-shadow: 0 6px 16px -4px rgba(225,29,72,0.45);
+}
+.btn-danger:hover { transform: translateY(-1px); box-shadow: 0 10px 22px -6px rgba(225,29,72,0.55); }
+.btn-icon {
+  width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 10px; background: transparent; color: #64748b;
+  border: 1px solid transparent; cursor: pointer; transition: all 0.2s ease;
+}
+.btn-icon:hover { background: rgba(15,23,42,0.05); color: #0f172a; }
+.sidebar .btn-icon { background: rgba(255,255,255,0.05); color: #cbd5e1; }
+
+.btn-glow { position: relative; overflow: hidden; }
+.btn-glow::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+  transform: translateX(-100%); transition: transform 0.7s ease;
+}
+.btn-glow:hover::after { transform: translateX(100%); }
+
+/* ---------- DECOR ---------- */
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+  position: relative;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+.live-dot::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%;
+  border: 2px solid rgba(37,99,235,0.3);
+  animation: ringPulse 2s ease-out infinite;
+}
+.live-dot-rose {
+  background: #e11d48;
+  box-shadow: 0 0 0 4px rgba(225,29,72,0.15);
+}
+.live-dot-rose::after { border-color: rgba(225,29,72,0.35); }
+@keyframes pulseDot {
+  0%,100% { box-shadow: 0 0 0 4px rgba(225,29,72,0.15); }
+  50%     { box-shadow: 0 0 0 7px rgba(225,29,72,0.08); }
+}
+@keyframes ringPulse {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+.gradient-text-rose {
+  background: linear-gradient(135deg, #fb7185 0%, #e11d48 50%, #be123c 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* ========================================================
+   OVERDUE ALERT BANNER
+   ======================================================== */
+.overdue-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  background:
+    radial-gradient(ellipse 500px 100px at 0% 50%, rgba(244,63,94,0.08), transparent 60%),
+    linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
+  border: 1px solid #fecdd3;
+  border-left: 4px solid #f43f5e;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 16px -8px rgba(244,63,94,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  position: relative;
+  overflow: hidden;
+}
+.overdue-alert-banner::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 200px;
+  background: radial-gradient(ellipse at right, rgba(244,63,94,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.overdue-alert-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fb7185, #e11d48);
+  color: #ffffff;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow:
+    0 8px 18px -6px rgba(225,29,72,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+  animation: pulseAlert 2.5s ease-in-out infinite;
+}
+@keyframes pulseAlert {
+  0%,100% { transform: scale(1); box-shadow: 0 8px 18px -6px rgba(225,29,72,0.5), inset 0 1px 0 rgba(255,255,255,0.25); }
+  50%     { transform: scale(1.05); box-shadow: 0 12px 24px -6px rgba(225,29,72,0.65), inset 0 1px 0 rgba(255,255,255,0.3); }
+}
+
+.overdue-alert-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+.overdue-alert-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #9f1239;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+.overdue-alert-title span {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #e11d48;
+  margin-right: 2px;
+}
+.overdue-alert-subtitle {
+  font-size: 0.8rem;
+  color: #be123c;
+  opacity: 0.75;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* ========================================================
+   OVERDUE TASK CARD
+   ======================================================== */
+.overdue-task-card {
+  background: #ffffff;
+  border: 1px solid #fee2e2;
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.03);
+}
+
+.overdue-task-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, #fb7185, #e11d48);
+  opacity: 0.85;
+  transition: all 0.28s ease;
+}
+
+.overdue-task-card:hover::before {
+  opacity: 1;
+  width: 6px;
+}
+
+.overdue-task-card:hover {
+  border-color: #fecaca;
+  box-shadow:
+    0 14px 32px -14px rgba(244,63,94,0.25),
+    0 0 0 1px rgba(244,63,94,0.05);
+  transform: translateY(-2px);
+}
+
+/* Content */
+.overdue-content {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.task-title-overdue {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.task-description-overdue {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Meta */
+.overdue-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.course-badge-overdue {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid #e2e8f0;
+}
+
+.priority-badge-overdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #f1f5f9;
+}
+
+.deadline-badge-overdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  box-shadow: 0 2px 6px -2px rgba(244,63,94,0.15);
+}
+
+/* Icon circle */
+.overdue-icon-circle {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+  border: 2px solid #f43f5e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #f43f5e;
+  box-shadow:
+    0 4px 10px -2px rgba(244,63,94,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  animation: pulseIcon 2.5s ease-in-out infinite;
+}
+@keyframes pulseIcon {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.05); }
+}
+
+/* Actions */
+.overdue-actions {
+  display: flex; align-items: center; gap: 6px;
+  opacity: 0; transform: translateX(10px);
+  transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+.overdue-task-card:hover .overdue-actions {
+  opacity: 1; transform: translateX(0);
+}
+.overdue-actions .btn-icon:hover {
+  background: rgba(244,63,94,0.08);
+  color: #e11d48;
+}
+
+/* ========================================================
+   EMPTY STATE
+   ======================================================== */
+.empty-state-overdue {
+  text-align: center;
+  padding: 80px 24px;
+  background:
+    radial-gradient(ellipse 500px 200px at 50% 0%, rgba(16,185,129,0.06), transparent 60%),
+    #ffffff;
+  border: 2px dashed #cbd5e1;
+  border-radius: 24px;
+  margin-top: 20px;
+  animation: fadeInUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+.empty-state-overdue .empty-icon-wrap {
+  width: 80px; height: 80px; border-radius: 24px;
+  margin: 0 auto 22px;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  display: flex; align-items: center; justify-content: center;
+  color: #059669;
+  box-shadow:
+    0 14px 30px -12px rgba(16,185,129,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.empty-state-overdue h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.empty-state-overdue p {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+  max-width: 380px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* ========================================================
+   MODAL + FORM
+   ======================================================== */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,0.55);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px; z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+.modal-backdrop.hidden { display: none; }
+.modal-content {
+  background: #ffffff; border-radius: 20px;
+  width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 30px 60px -20px rgba(15,23,42,0.35), 0 0 0 1px rgba(15,23,42,0.05);
+  animation: modalIn 0.35s cubic-bezier(0.34,1.4,0.64,1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.confirm-icon-wrap {
+  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+  border: 1px solid #fecdd3;
+  box-shadow: 0 8px 20px -8px rgba(244,63,94,0.3);
+}
+
+.form-label {
+  display: block; font-size: 12.5px; font-weight: 700;
+  color: #334155; margin-bottom: 6px; letter-spacing: -0.01em;
+}
+.form-input {
+  width: 100%; padding: 11px 14px; border-radius: 11px;
+  border: 1.5px solid #e2e8f0; background: #ffffff; color: #0f172a;
+  font-size: 13.5px; font-family: inherit; font-weight: 500;
+  transition: all 0.2s ease; outline: none;
+}
+.form-input::placeholder { color: #94a3b8; }
+.form-input:hover { border-color: #cbd5e1; }
+.form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+}
+.form-textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  padding-right: 38px; cursor: pointer;
+}
+
+/* ---------- TOAST ---------- */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 300; pointer-events: none;
+}
+.toast-container > * {
+  pointer-events: auto;
+  background: #ffffff; border: 1px solid #f1f5f9;
+  border-radius: 14px; padding: 14px 18px;
+  font-size: 13.5px; font-weight: 600; color: #0f172a;
+  box-shadow: 0 20px 40px -16px rgba(15,23,42,0.25), 0 0 0 1px rgba(15,23,42,0.02);
+  animation: toastIn 0.35s cubic-bezier(0.34,1.4,0.64,1);
+  min-width: 260px; max-width: 380px;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ========================================================
+   RESPONSIVE
+   ======================================================== */
+@media (max-width: 1024px) {
+  .bg-orb-1 { width: 380px; height: 380px; }
+  .bg-orb-2 { width: 340px; height: 340px; }
+}
+
+@media (max-width: 768px) {
+  .mobile-header { display: flex; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 20px 0 40px -20px rgba(15,23,42,0.5);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { padding-top: 4px; }
+
+  .overdue-task-card {
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 12px;
+  }
+  .overdue-actions {
+    opacity: 1; transform: none;
+    width: 100%; justify-content: flex-end;
+    margin-top: 8px; padding-top: 12px;
+    border-top: 1px solid #fee2e2;
+  }
+
+  .overdue-alert-banner {
+    padding: 16px;
+    gap: 12px;
+  }
+  .overdue-alert-icon { width: 40px; height: 40px; border-radius: 12px; }
+  .overdue-alert-title { font-size: 0.88rem; }
+
+  .toast-container {
+    left: 16px; right: 16px; bottom: 16px;
+    align-items: stretch;
+  }
+  .toast-container > * { min-width: 0; max-width: none; }
+
+  h1 { font-size: 1.65rem !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- SCROLLBAR ---------- */
+.main-content::-webkit-scrollbar { width: 8px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1; border-radius: 999px;
+  border: 2px solid transparent; background-clip: content-box;
+}
+.main-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
+
+/* ========================================================
+   FULL WIDTH — Rata Kiri-Kanan
+   ======================================================== */
+.main-content {
+  flex: 1;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+  background: #f8fafc;
+}
+
+.main-content > div {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+  padding-top: 32px !important;
+  padding-bottom: 32px !important;
+  margin: 0 !important;
+}
+
+.main-content .overdue-alert-banner,
+.main-content #overdueTasksList {
+  width: 100%;
+}
+
+.overdue-task-card {
+  width: 100%;
+}
+
+/* Mobile padding lebih kecil */
+@media (max-width: 768px) {
+  .main-content > div {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content > div {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+/* ========================================================
+   TASK CARD PREMIUM — untuk halaman Terlambat
+   ======================================================== */
+#overdueTasksList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#overdueTasksList .task-card {
+  background: #ffffff;
+  border: 1px solid #fee2e2;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  cursor: pointer;
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+#overdueTasksList .task-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #fb7185, #e11d48);
+  transition: all 0.25s ease;
+}
+
+#overdueTasksList .task-card:hover {
+  border-color: #fecaca;
+  box-shadow:
+    0 12px 28px -12px rgba(244, 63, 94, 0.25),
+    0 0 0 1px rgba(244, 63, 94, 0.06);
+  transform: translateY(-3px);
+}
+
+#overdueTasksList .task-card:hover::before {
+  width: 5px;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
+}
+
+/* Container dalam card — flex full width */
+#overdueTasksList .task-card > .flex {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+
+#overdueTasksList .task-card > .flex > .flex-1 {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+/* Checkbox wrapper */
+#overdueTasksList .task-card .task-checkbox-wrapper {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+#overdueTasksList .task-card .task-checkbox-wrapper input[type="checkbox"] {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+#overdueTasksList .task-card .task-checkbox-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 2px solid #fecaca;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#overdueTasksList .task-card .task-checkbox-wrapper:hover .task-checkbox-visual {
+  border-color: #f43f5e;
+  background: #fff1f2;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.2);
+}
+
+#overdueTasksList .task-card .task-checkbox-wrapper input:checked ~ .task-checkbox-visual {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  box-shadow: 0 4px 10px -2px rgba(16, 185, 129, 0.5);
+}
+
+#overdueTasksList .task-card .task-checkbox-wrapper input:checked ~ .task-checkbox-visual::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+/* Judul & deskripsi */
+#overdueTasksList .task-card h3 {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  word-break: break-word;
+  margin-bottom: 4px;
+}
+
+#overdueTasksList .task-card p {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Meta row */
+#overdueTasksList .task-card .flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Tombol aksi — ke KANAN */
+#overdueTasksList .task-card .task-actions {
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#overdueTasksList .task-card:hover .task-actions {
+  opacity: 1;
+}
+
+#overdueTasksList .task-actions .btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: #64748b;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+#overdueTasksList .task-actions .btn-icon:hover {
+  background: rgba(244, 63, 94, 0.1);
+  color: #e11d48;
+  transform: scale(1.1);
+}
+
+/* ========================================================
+   MOBILE
+   ======================================================== */
+@media (max-width: 768px) {
+  #overdueTasksList .task-card {
+    flex-wrap: wrap;
+    padding: 14px;
+    gap: 10px;
+  }
+
+  #overdueTasksList .task-card .task-actions {
+    opacity: 1;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #fee2e2;
+  }
+}

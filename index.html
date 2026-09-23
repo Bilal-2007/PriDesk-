@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PriDesk — Dashboard Utama</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- CSS Terpisah -->
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body data-page="dashboard" class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+  <!-- AMBIENT BACKGROUND DECORATIONS -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- MOBILE OVERLAY -->
+  <div id="mobileOverlay" class="hidden mobile-overlay" aria-hidden="true"></div>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header">
+    <button id="mobileMenuBtn" class="btn-icon" aria-label="Buka Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center brand-logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+          <rect x="9" y="3" width="6" height="4" rx="1" ry="1" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      </div>
+      <span class="font-bold text-slate-900">Dashboard</span>
+    </div>
+  </header>
+
+  <div class="app-shell flex flex-1 overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Navigasi Utama">
+
+      <!-- Glow accent line -->
+      <div class="sidebar-glow" aria-hidden="true"></div>
+
+      <!-- BRAND -->
+      <div class="p-5 brand-section">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center brand-logo-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+              <rect x="9" y="3" width="6" height="4" rx="1" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <p class="font-bold text-white text-base leading-tight tracking-tight">PriDesk</p>
+            <p class="text-[11px] text-slate-400 leading-tight font-medium">Smart Task Manager</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto sidebar-nav" role="menu">
+        <p class="section-label px-3 pt-3 pb-2">Menu Utama</p>
+
+        <a href="index.html" class="sidebar-nav-item w-full text-left active" data-page="dashboard" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <a href="semua_tugas.html" class="sidebar-nav-item w-full text-left" data-page="all" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+          <span class="nav-label">Semua Tugas</span>
+          <span class="sidebar-badge" id="badgeAll"></span>
+        </a>
+
+        <a href="hari_ini.html" class="sidebar-nav-item w-full text-left" data-page="today" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span class="nav-label">Hari Ini</span>
+          <span class="sidebar-badge" id="badgeToday"></span>
+        </a>
+
+        <!-- MENU TERLAMBAT -->
+        <a href="terlambat.html" class="sidebar-nav-item w-full text-left sidebar-nav-overdue" data-page="overdue"
+          role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <span class="nav-label">Terlambat</span>
+          <span class="sidebar-badge sidebar-badge-rose" id="badgeOverdue"></span>
+        </a>
+
+        <a href="kalender.html" class="sidebar-nav-item w-full text-left" data-page="calendar" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+          </svg>
+          <span class="nav-label">Kalender</span>
+        </a>
+
+        <a href="selesai.html" class="sidebar-nav-item w-full text-left" data-page="done" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="nav-label">Selesai</span>
+          <span class="sidebar-badge sidebar-badge-emerald" id="badgeDone"></span>
+        </a>
+      </nav>
+
+      <div class="p-3">
+        <button class="btn btn-primary w-full btn-glow" data-action="add-task">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Tambah Tugas
+        </button>
+      </div>
+
+      <div class="p-3 sidebar-footer">
+        <p class="section-label px-3 pb-2">Manajemen Data</p>
+        <button id="exportBtn" class="sidebar-nav-item w-full text-left text-xs" data-tooltip="Simpan ke JSON">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          <span class="nav-label">Export JSON</span>
+        </button>
+        <button id="importBtn" class="sidebar-nav-item w-full text-left text-xs">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          <span class="nav-label">Import JSON</span>
+        </button>
+        <input type="file" id="importFileInput" accept=".json" class="hidden" aria-hidden="true">
+        <button id="resetDataBtn" class="sidebar-nav-item w-full text-left text-xs sidebar-nav-danger">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3-3h8" />
+          </svg>
+          <span class="nav-label">Reset Semua Data</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- KONTEN UTAMA -->
+    <main class="main-content overflow-y-auto" role="main">
+      <div class="p-6 md:p-8 space-y-8 max-w-7xl mx-auto w-full">
+
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 fade-in-up">
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="live-dot"></span>
+              <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-blue-600">Overview</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 leading-[1.15]"
+              id="greetingText">
+              Selamat Pagi! 👋
+            </h1>
+            <p class="text-sm md:text-base text-slate-500 mt-2 font-medium" id="dashboardDate">
+              Memuat tanggal...
+            </p>
+          </div>
+          <div class="hidden md:flex items-center gap-2.5 px-4 py-2.5 glass-pill">
+            <div
+              class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm shadow-amber-200">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M12 3v1.5M12 19.5V21M5.6 5.6l1.05 1.05M17.35 17.35l1.05 1.05M3 12h1.5M19.5 12H21M5.6 18.4l1.05-1.05M17.35 6.65l1.05-1.05" />
+                <circle cx="12" cy="12" r="4" />
+              </svg>
+            </div>
+            <span class="text-sm font-semibold text-slate-700">Fokus pada <span class="gradient-text-blue">1–3
+                tugas</span> prioritas hari ini.</span>
+          </div>
+        </div>
+
+        <!-- PROGRESS SECTION -->
+        <div class="stat-card stat-card-premium fade-in-up" style="animation-delay:.05s">
+          <div class="flex items-start justify-between mb-5">
+            <div>
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm shadow-blue-200">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8" />
+                  </svg>
+                </div>
+                <p class="text-base font-bold text-slate-900">Progress Penyelesaian</p>
+              </div>
+              <p class="text-xs text-slate-500 mt-2 font-medium">Persentase tugas yang telah diselesaikan dari total
+                keseluruhan</p>
+            </div>
+            <div class="text-right">
+              <span id="progressLabel" class="text-4xl font-extrabold tracking-tight gradient-text-blue">0%</span>
+            </div>
+          </div>
+          <div class="progress-bar-track">
+            <div id="progressBarFill" class="progress-bar-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- METRICS GRID -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="stat-card metric-card fade-in-up" style="animation-delay:.10s">
+            <div class="metric-glow metric-glow-slate"></div>
+            <div class="flex items-start justify-between relative z-10">
+              <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.12em]">Total Tugas</p>
+                <p id="statTotal" class="metric-number">0</p>
+              </div>
+              <div class="metric-icon metric-icon-slate">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+                  <rect x="9" y="3" width="6" height="4" rx="1" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card metric-card fade-in-up" style="animation-delay:.15s">
+            <div class="metric-glow metric-glow-blue"></div>
+            <div class="flex items-start justify-between relative z-10">
+              <div>
+                <p class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.12em]">Sedang Aktif</p>
+                <p id="statActive" class="metric-number">0</p>
+              </div>
+              <div class="metric-icon metric-icon-blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card metric-card fade-in-up" style="animation-delay:.20s">
+            <div class="metric-glow metric-glow-emerald"></div>
+            <div class="flex items-start justify-between relative z-10">
+              <div>
+                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.12em]">Selesai</p>
+                <p id="statCompleted" class="metric-number">0</p>
+              </div>
+              <div class="metric-icon metric-icon-emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card metric-card fade-in-up" style="animation-delay:.25s">
+            <div class="metric-glow metric-glow-rose"></div>
+            <div class="flex items-start justify-between relative z-10">
+              <div>
+                <p class="text-[10px] font-bold text-rose-500 uppercase tracking-[0.12em]">Terlambat</p>
+                <p id="statOverdue" class="metric-number">0</p>
+              </div>
+              <div class="metric-icon metric-icon-rose">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN CONTENT GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          <!-- KIRI -->
+          <div class="lg:col-span-8 space-y-6">
+
+            <div class="space-y-4 fade-in-up" style="animation-delay:.30s">
+              <div class="flex items-center justify-between">
+                <h2 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                  <span class="section-icon section-icon-blue">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                  </span>
+                  Fokus Hari Ini
+                </h2>
+                <a href="hari_ini.html" class="link-arrow">
+                  Lihat Semua <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </a>
+              </div>
+              <div id="dashboardTodayList" class="space-y-3 min-h-[120px]"></div>
+            </div>
+
+            <div class="space-y-4 pt-4 border-t border-slate-200/70 fade-in-up" style="animation-delay:.35s">
+              <div class="flex items-center justify-between">
+                <h2 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                  <span class="section-icon section-icon-slate">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </span>
+                  Tugas Terbaru
+                </h2>
+                <a href="semua_tugas.html" class="link-arrow">
+                  Lihat Semua <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </a>
+              </div>
+              <div id="dashboardRecentList" class="space-y-3 min-h-[120px]"></div>
+            </div>
+
+          </div>
+
+          <!-- KANAN -->
+          <div class="lg:col-span-4 space-y-6">
+
+            <div class="stat-card fade-in-up" style="animation-delay:.30s">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <span class="section-icon section-icon-amber">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </span>
+                  Deadline Terdekat
+                </h3>
+                <a href="semua_tugas.html" class="link-arrow text-xs">Lihat Semua</a>
+              </div>
+              <div id="upcomingList" class="space-y-3"></div>
+            </div>
+
+            <div class="stat-card fade-in-up" style="animation-delay:.35s">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <span class="section-icon section-icon-emerald">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                  </span>
+                  Per Mata Kuliah
+                </h3>
+              </div>
+              <div id="courseList" class="space-y-3"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL TAMBAH / EDIT TUGAS -->
+  <div id="taskModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <div class="flex items-center justify-between p-6 pb-4 border-b border-slate-100">
+        <h2 id="modalTitle" class="text-lg font-bold text-slate-900">Tambah Tugas Baru</h2>
+        <button id="closeModalBtn" class="btn-icon" aria-label="Tutup Modal"><svg width="18" height="18"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg></button>
+      </div>
+      <form id="taskForm" class="p-6 space-y-4" novalidate>
+        <input type="hidden" id="taskId">
+        <div><label for="fieldTitle" class="form-label">Judul Tugas <span class="text-rose-500">*</span></label><input
+            type="text" id="fieldTitle" class="form-input" placeholder="Contoh: Proposal Tugas Akhir Bab 1-3" required
+            maxlength="200" autocomplete="off"></div>
+        <div>
+          <label for="fieldCourse" class="form-label">Mata Kuliah / Kegiatan</label>
+          <div class="course-picker">
+            <div class="course-picker-input-wrap">
+              <input type="text" id="fieldCourse" class="form-input course-picker-input"
+                placeholder="Pilih atau ketik kegiatan baru..." maxlength="100" autocomplete="off">
+              <svg class="course-picker-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+            <div class="course-picker-panel">
+              <div class="course-picker-list"></div>
+            </div>
+          </div>
+        </div>
+        <div><label for="fieldDescription" class="form-label">Deskripsi / Catatan</label><textarea id="fieldDescription"
+            class="form-input form-textarea" placeholder="Tambahkan catatan atau detail tugas (opsional)..."
+            maxlength="1000" rows="3"></textarea></div>
+        <div>
+          <label for="fieldDeadline" class="form-label">Tenggat Waktu</label>
+          <input type="text" id="fieldDeadline" class="form-input" placeholder="Pilih tanggal & waktu" readonly
+            style="cursor:pointer;">
+          <p class="text-xs text-slate-500 mt-1">💡 Status deadline akan otomatis berubah sesuai waktu</p>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <button type="button" id="cancelModalBtn" class="btn btn-secondary">Batal</button>
+          <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Tambah Tugas</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL KONFIRMASI -->
+  <div id="confirmModal" class="modal-backdrop hidden" role="alertdialog" aria-modal="true"
+    aria-labelledby="confirmTitle">
+    <div class="modal-content max-w-sm text-center">
+      <div class="p-6 space-y-4">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto confirm-icon-wrap">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div>
+          <h3 id="confirmTitle" class="text-lg font-bold text-slate-900 mb-1">Konfirmasi</h3>
+          <p id="confirmMessage" class="text-sm text-slate-500 leading-relaxed"></p>
+        </div>
+        <div class="flex items-center justify-center gap-3 pt-1"><button type="button" id="confirmCancelBtn"
+            class="btn btn-secondary">Batal</button><button type="button" id="confirmOkBtn" class="btn btn-danger">Ya,
+            Hapus</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DETAIL TUGAS -->
+  <div id="taskDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true"
+    aria-labelledby="detailModalTitle">
+    <div class="modal-content max-w-lg">
+      <div class="p-6 border-b border-slate-100">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <h2 id="detailModalTitle" class="text-xl font-bold text-slate-900 mb-2 break-words"></h2>
+            <div id="detailModalBadges" class="flex flex-wrap gap-2"></div>
+          </div>
+          <button id="closeDetailModalBtn" class="btn-icon flex-shrink-0" aria-label="Tutup"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg></button>
+        </div>
+      </div>
+      <div id="detailModalBody" class="p-6 space-y-4"></div>
+      <div class="p-6 pt-0 flex flex-wrap gap-2">
+        <button id="detailToggleBtn" class="btn btn-secondary flex-1"></button>
+        <button id="detailEditBtn" class="btn btn-secondary">Edit</button>
+        <button id="detailDeleteBtn" class="btn btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+
+  <!-- FLOATING ADD BUTTON (mobile only) -->
+  <button class="fab-add-task" data-action="add-task" aria-label="Tambah Tugas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+      stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/course-picker.js"></script>
+
+
+  <script>
+    /* 🔥 Force clean sidebar & overlay saat halaman dimuat */
+    (function () {
+      function clean() {
+        var s = document.getElementById('sidebar');
+        var o = document.getElementById('mobileOverlay');
+        if (s) s.classList.remove('mobile-open', 'open');
+        if (o) {
+          o.classList.add('hidden');
+          o.style.display = 'none';
+          o.style.pointerEvents = 'none';
+        }
+        document.body.style.overflow = '';
+      }
+      clean();
+      window.addEventListener('load', clean);
+      setTimeout(clean, 100);
+      setTimeout(clean, 500);
+      setTimeout(clean, 1500);
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PriDesk — Arsip Selesai</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/selesai.css">
+</head>
+
+<body data-page="done" class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+  <!-- AMBIENT BACKGROUND -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- MOBILE OVERLAY -->
+  <div id="mobileOverlay" class="hidden mobile-overlay" aria-hidden="true"></div>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header">
+    <button id="mobileMenuBtn" class="btn-icon" aria-label="Buka Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center brand-logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+          <rect x="9" y="3" width="6" height="4" rx="1" ry="1" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      </div>
+      <span class="font-bold text-slate-900">Selesai</span>
+    </div>
+  </header>
+
+  <div class="app-shell flex flex-1 overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Navigasi Utama">
+      <div class="sidebar-glow" aria-hidden="true"></div>
+
+      <div class="p-5 brand-section">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center brand-logo-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+              <rect x="9" y="3" width="6" height="4" rx="1" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <p class="font-bold text-white text-base leading-tight tracking-tight">PriDesk</p>
+            <p class="text-[11px] text-slate-400 leading-tight font-medium">Smart Task Manager</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto sidebar-nav" role="menu">
+        <p class="section-label px-3 pt-3 pb-2">Menu Utama</p>
+
+        <a href="index.html" class="sidebar-nav-item w-full text-left" data-page="dashboard" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <a href="semua_tugas.html" class="sidebar-nav-item w-full text-left" data-page="all" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+          <span class="nav-label">Semua Tugas</span>
+          <span class="sidebar-badge" id="badgeAll"></span>
+        </a>
+
+        <a href="hari_ini.html" class="sidebar-nav-item w-full text-left" data-page="today" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span class="nav-label">Hari Ini</span>
+          <span class="sidebar-badge" id="badgeToday"></span>
+        </a>
+
+        <a href="terlambat.html" class="sidebar-nav-item w-full text-left sidebar-nav-overdue" data-page="overdue"
+          role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <span class="nav-label">Terlambat</span>
+          <span class="sidebar-badge sidebar-badge-rose" id="badgeOverdue"></span>
+        </a>
+
+        <a href="kalender.html" class="sidebar-nav-item w-full text-left" data-page="calendar" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+          </svg>
+          <span class="nav-label">Kalender</span>
+        </a>
+
+        <a href="selesai.html" class="sidebar-nav-item w-full text-left sidebar-nav-emerald active" data-page="done"
+          role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="nav-label">Selesai</span>
+          <span class="sidebar-badge sidebar-badge-emerald" id="badgeDone"></span>
+        </a>
+      </nav>
+
+      <div class="p-3">
+        <button class="btn btn-primary w-full btn-glow" data-action="add-task">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Tambah Tugas
+        </button>
+      </div>
+
+      <div class="p-3 sidebar-footer">
+        <p class="section-label px-3 pb-2">Manajemen Data</p>
+        <button id="exportBtn" class="sidebar-nav-item w-full text-left text-xs">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          <span class="nav-label">Export JSON</span>
+        </button>
+        <button id="importBtn" class="sidebar-nav-item w-full text-left text-xs">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          <span class="nav-label">Import JSON</span>
+        </button>
+        <input type="file" id="importFileInput" accept=".json" class="hidden" aria-hidden="true">
+        <button id="resetDataBtn" class="sidebar-nav-item w-full text-left text-xs sidebar-nav-danger">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3-3h8" />
+          </svg>
+          <span class="nav-label">Reset Semua Data</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- KONTEN UTAMA -->
+    <main class="main-content relative overflow-y-auto" role="main">
+      <div class="space-y-6 w-full"></div>
+      <!-- HEADER: ACHIEVEMENT STYLE -->
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 fade-in-up">
+        <div class="flex items-start gap-4">
+          <div class="achievement-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="live-dot live-dot-emerald"></span>
+              <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-600">Achievement</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+              Arsip <span class="gradient-text-emerald">Selesai</span>
+            </h1>
+            <p class="text-sm text-slate-500 mt-2 font-medium">
+              Jejak produktivitasmu · <span id="doneTasksCount" class="font-semibold text-emerald-600">0 tugas
+                diselesaikan</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- TOMBOL HAPUS SEMUA -->
+        <button id="clearDoneBtn" class="btn btn-danger self-start" title="Hapus semua tugas yang sudah selesai">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+            <path d="M10 11v6M14 11v6" />
+            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+          </svg>
+          Hapus Semua
+        </button>
+      </div>
+
+      <!-- CELEBRATION BANNER -->
+      <div class="celebration-banner fade-in-up" style="animation-delay:.05s" id="celebrationBanner">
+        <div class="celebration-glow" aria-hidden="true"></div>
+        <div class="celebration-content">
+          <div class="celebration-trophy">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z" />
+              <path d="M17 5h3a2 2 0 01-2 4h-1M7 5H4a2 2 0 002 4h1" />
+            </svg>
+          </div>
+          <div class="celebration-text">
+            <p class="celebration-title">Kerja bagus! 🎉</p>
+            <p class="celebration-subtitle">Setiap tugas selesai adalah satu langkah maju. Terus semangat!</p>
+          </div>
+        </div>
+        <div class="celebration-stars" aria-hidden="true">
+          <span class="star star-1">✦</span>
+          <span class="star star-2">✦</span>
+          <span class="star star-3">✦</span>
+          <span class="star star-4">✦</span>
+        </div>
+      </div>
+
+      <!-- TASK LIST -->
+      <div id="doneTasksList" class="space-y-3 min-h-[300px] fade-in-up" style="animation-delay:.10s">
+        <!-- Diisi oleh JS -->
+      </div>
+
+  </div>
+  </main>
+  </div>
+
+  <!-- MODAL TAMBAH / EDIT TUGAS -->
+  <div id="taskModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <div class="flex items-center justify-between p-6 pb-4 border-b border-slate-100">
+        <h2 id="modalTitle" class="text-lg font-bold text-slate-900">Tambah Tugas Baru</h2>
+        <button id="closeModalBtn" class="btn-icon" aria-label="Tutup Modal"><svg width="18" height="18"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg></button>
+      </div>
+      <form id="taskForm" class="p-6 space-y-4" novalidate>
+        <input type="hidden" id="taskId">
+        <div><label for="fieldTitle" class="form-label">Judul Tugas <span class="text-rose-500">*</span></label><input
+            type="text" id="fieldTitle" class="form-input" placeholder="Contoh: Proposal Tugas Akhir Bab 1-3" required
+            maxlength="200" autocomplete="off"></div>
+        <div><label for="fieldCourse" class="form-label">Mata Kuliah</label><input type="text" id="fieldCourse"
+            class="form-input" placeholder="Contoh: Basis Data Lanjut" maxlength="100" autocomplete="off"></div>
+        <div><label for="fieldDescription" class="form-label">Deskripsi / Catatan</label><textarea id="fieldDescription"
+            class="form-input form-textarea" placeholder="Tambahkan catatan atau detail tugas (opsional)..."
+            maxlength="1000" rows="3"></textarea></div>
+        <div>
+          <label for="fieldDeadline" class="form-label">Tenggat Waktu</label>
+          <input type="text" id="fieldDeadline" class="form-input" placeholder="Pilih tanggal & waktu" readonly
+            style="cursor:pointer;">
+          <p class="text-xs text-slate-500 mt-1">💡 Status deadline akan otomatis berubah sesuai waktu</p>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <button type="button" id="cancelModalBtn" class="btn btn-secondary">Batal</button>
+          <button type="submit" id="modalSubmitBtn" class="btn btn-primary">Tambah Tugas</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL KONFIRMASI -->
+  <div id="confirmModal" class="modal-backdrop hidden" role="alertdialog" aria-modal="true"
+    aria-labelledby="confirmTitle">
+    <div class="modal-content max-w-sm text-center">
+      <div class="p-6 space-y-4">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto confirm-icon-wrap">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div>
+          <h3 id="confirmTitle" class="text-lg font-bold text-slate-900 mb-1">Konfirmasi</h3>
+          <p id="confirmMessage" class="text-sm text-slate-500 leading-relaxed"></p>
+        </div>
+        <div class="flex items-center justify-center gap-3 pt-1"><button type="button" id="confirmCancelBtn"
+            class="btn btn-secondary">Batal</button><button type="button" id="confirmOkBtn" class="btn btn-danger">Ya,
+            Hapus</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DETAIL TUGAS -->
+  <div id="taskDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true"
+    aria-labelledby="detailModalTitle">
+    <div class="modal-content max-w-lg">
+      <div class="p-6 border-b border-slate-100">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <h2 id="detailModalTitle" class="text-xl font-bold text-slate-900 mb-2 break-words"></h2>
+            <div id="detailModalBadges" class="flex flex-wrap gap-2"></div>
+          </div>
+          <button id="closeDetailModalBtn" class="btn-icon flex-shrink-0" aria-label="Tutup"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg></button>
+        </div>
+      </div>
+      <div id="detailModalBody" class="p-6 space-y-4"></div>
+      <div class="p-6 pt-0 flex flex-wrap gap-2">
+        <button id="detailToggleBtn" class="btn btn-secondary flex-1"></button>
+        <button id="detailEditBtn" class="btn btn-secondary">Edit</button>
+        <button id="detailDeleteBtn" class="btn btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- FLOATING ADD BUTTON (mobile only) -->
+<button class="fab-add-task" data-action="add-task" aria-label="Tambah Tugas">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"/>
+    <line x1="5" y1="12" x2="19" y2="12"/>
+  </svg>
+</button>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+
+  
+
+  <script>
+    (function () {
+      if (document.body.dataset.page !== 'done') return;
+      function reload() {
+        var box = document.getElementById('doneTasksList');
+        if (!box) return;
+        var all = [];
+        try { all = JSON.parse(localStorage.getItem('pridesk_tasks') || '[]'); } catch (e) { }
+        var done = all.filter(function (t) { return t && t.completed === true; });
+        console.log('[FIX-Done] total=' + all.length + ' selesai=' + done.length);
+
+        var cEl = document.getElementById('doneTasksCount');
+        if (cEl) cEl.textContent = done.length + ' tugas diselesaikan';
+
+        if (done.length === 0) {
+          box.innerHTML = '<div class="empty-state-completed"><div class="empty-icon-wrap"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Belum ada tugas selesai</h3><p>Selesaikan tugas pertamamu untuk melihatnya di sini.</p></div>';
+          return;
+        }
+        box.innerHTML = done.map(function (t) {
+          return '<div class="completed-task-card" data-task-id="' + t.id + '">' +
+            '<div class="completed-check-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+            '<div class="completed-content">' +
+            '<div class="task-title-completed">' + (t.title || '(Tanpa judul)') + '</div>' +
+            (t.description ? '<div class="task-description-completed">' + t.description + '</div>' : '') +
+            '<div class="completed-meta-row">' +
+            (t.course ? '<span class="course-badge-completed">' + t.course + '</span>' : '') +
+            (t.deadline ? '<span class="deadline-badge-completed">📅 ' + new Date(t.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + '</span>' : '') +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        }).join('');
+      }
+      var n = 0;
+      function loop() { n++; reload(); if (n < 20) setTimeout(loop, 500); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loop);
+      else loop();
+      window.addEventListener('load', loop);
+    })();
+  </script>
+
+  <script>
+    (function () {
+      if (document.body.dataset.page !== 'done') return;
+
+      function load() {
+        try { return JSON.parse(localStorage.getItem('pridesk_tasks') || '[]'); } catch (e) { return []; }
+      }
+      function save(arr) { localStorage.setItem('pridesk_tasks', JSON.stringify(arr)); }
+
+      var btn = document.getElementById('clearDoneBtn');
+      if (!btn) return;
+
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var all = load();
+        var doneCount = all.filter(function (t) { return t && t.completed === true; }).length;
+
+        if (doneCount === 0) {
+          if (typeof showToast === 'function') showToast('Belum ada tugas selesai untuk dihapus.', 'info');
+          return;
+        }
+
+        var doClear = function () {
+          var filtered = all.filter(function (t) { return !t.completed; });
+          save(filtered);
+
+          if (typeof updateSidebarBadges === 'function') updateSidebarBadges(filtered);
+
+          if (typeof showToast === 'function') showToast(doneCount + ' tugas selesai dihapus.', 'success');
+
+          // Refresh list
+          var box = document.getElementById('doneTasksList');
+          if (box) box.innerHTML = '';
+          if (typeof window.refreshDoneTasks === 'function') window.refreshDoneTasks();
+
+          // Fallback: reload setelah 400ms biar pasti update
+          setTimeout(function () { location.reload(); }, 600);
+        };
+
+        var msg = 'Hapus ' + doneCount + ' tugas yang sudah selesai? Tindakan ini tidak bisa dibatalkan.';
+        if (typeof openConfirmModal === 'function') {
+          openConfirmModal('Hapus Semua Tugas Selesai?', msg, doClear);
+        } else if (confirm(msg)) {
+          doClear();
+        }
+      });
+
+      // Sembunyikan tombol kalau tidak ada tugas selesai
+      function updateButtonVisibility() {
+        var all = load();
+        var doneCount = all.filter(function (t) { return t && t.completed === true; }).length;
+        btn.style.display = doneCount > 0 ? '' : 'none';
+      }
+      updateButtonVisibility();
+      setTimeout(updateButtonVisibility, 500);
+      setTimeout(updateButtonVisibility, 1500);
+    })();
+  </script>
+
+</body>
+
+</html>

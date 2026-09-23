@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PriDesk — Kalender Tugas</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/kalender.css">
+</head>
+
+<body data-page="calendar" class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+  <!-- AMBIENT BACKGROUND -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- MOBILE OVERLAY -->
+  <div id="mobileOverlay" class="hidden mobile-overlay" aria-hidden="true"></div>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header">
+    <button id="mobileMenuBtn" class="btn-icon" aria-label="Buka Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center brand-logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+          <rect x="9" y="3" width="6" height="4" rx="1" ry="1" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      </div>
+      <span class="font-bold text-slate-900">Kalender</span>
+    </div>
+  </header>
+
+  <div class="app-shell flex flex-1 overflow-hidden">
+
+    <!-- SIDEBAR DARK PREMIUM -->
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Navigasi Utama">
+      <div class="sidebar-glow" aria-hidden="true"></div>
+
+      <div class="p-5 brand-section">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center brand-logo-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+              <rect x="9" y="3" width="6" height="4" rx="1" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <p class="font-bold text-white text-base leading-tight tracking-tight">PriDesk</p>
+            <p class="text-[11px] text-slate-400 leading-tight font-medium">Smart Task Manager</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto sidebar-nav" role="menu">
+        <p class="section-label px-3 pt-3 pb-2">Menu Utama</p>
+
+        <a href="index.html" class="sidebar-nav-item w-full text-left" data-page="dashboard" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <a href="semua_tugas.html" class="sidebar-nav-item w-full text-left" data-page="all" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+          <span class="nav-label">Semua Tugas</span>
+          <span class="sidebar-badge" id="badgeAll"></span>
+        </a>
+
+        <a href="hari_ini.html" class="sidebar-nav-item w-full text-left" data-page="today" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span class="nav-label">Hari Ini</span>
+          <span class="sidebar-badge" id="badgeToday"></span>
+        </a>
+
+        <a href="terlambat.html" class="sidebar-nav-item w-full text-left sidebar-nav-overdue" data-page="overdue"
+          role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <span class="nav-label">Terlambat</span>
+          <span class="sidebar-badge sidebar-badge-rose" id="badgeOverdue"></span>
+        </a>
+
+        <a href="kalender.html" class="sidebar-nav-item w-full text-left active" data-page="calendar" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+          </svg>
+          <span class="nav-label">Kalender</span>
+        </a>
+
+        <a href="selesai.html" class="sidebar-nav-item w-full text-left" data-page="done" role="menuitem">
+          <svg class="nav-icon flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="nav-label">Selesai</span>
+          <span class="sidebar-badge sidebar-badge-emerald" id="badgeDone"></span>
+        </a>
+      </nav>
+
+      <div class="p-3">
+        <button class="btn btn-primary w-full btn-glow" data-action="add-task">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Tambah Tugas
+        </button>
+      </div>
+
+      <div class="p-3 sidebar-footer">
+        <p class="section-label px-3 pb-2">Manajemen Data</p>
+        <button id="exportBtn" class="sidebar-nav-item w-full text-left text-xs">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          <span class="nav-label">Export JSON</span>
+        </button>
+        <button id="importBtn" class="sidebar-nav-item w-full text-left text-xs">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          <span class="nav-label">Import JSON</span>
+        </button>
+        <input type="file" id="importFileInput" accept=".json" class="hidden" aria-hidden="true">
+        <button id="resetDataBtn" class="sidebar-nav-item w-full text-left text-xs sidebar-nav-danger">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3-3h8" />
+          </svg>
+          <span class="nav-label">Reset Semua Data</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- KONTEN UTAMA: KALENDER -->
+    <main class="main-content relative overflow-y-auto" role="main">
+      <div class="space-y-6 w-full">
+
+        <!-- HEADER SECTION: Elegant Month Navigation -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 fade-in-up">
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="live-dot"></span>
+              <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-blue-600">Calendar View</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-[1.15]"
+              id="calendarMonthYear">September 2026</h1>
+            <p class="text-sm text-slate-500 mt-2 font-medium">Visualisasi deadline dan pola produktivitas bulanan</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="calTodayBtn" class="btn-today">Hari Ini</button>
+            <div class="cal-nav-group">
+              <button id="calPrevBtn" class="btn-icon calendar-nav-btn" aria-label="Bulan Sebelumnya">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <div class="cal-nav-divider"></div>
+              <button id="calNextBtn" class="btn-icon calendar-nav-btn" aria-label="Bulan Berikutnya">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN CALENDAR GRID & SIDE PANEL -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          <!-- KOLOM KIRI: Kalender Grid -->
+          <div class="lg:col-span-8 fade-in-up" style="animation-delay:.05s">
+            <div class="calendar-shell">
+
+              <!-- Day Headers (Minggu first — SESUAI ASLINYA) -->
+              <div class="calendar-days-header">
+                <div class="calendar-day-name calendar-day-name-weekend">Min</div>
+                <div class="calendar-day-name">Sen</div>
+                <div class="calendar-day-name">Sel</div>
+                <div class="calendar-day-name">Rab</div>
+                <div class="calendar-day-name">Kam</div>
+                <div class="calendar-day-name">Jum</div>
+                <div class="calendar-day-name">Sab</div>
+              </div>
+
+              <!-- Calendar Grid -->
+              <div id="calendarGrid" class="calendar-grid grid grid-cols-7 gap-2">
+                <!-- Diisi oleh app.js -->
+              </div>
+
+              <!-- Legend -->
+              <div class="calendar-legend">
+                <p class="calendar-legend-label">Status Deadline:</p>
+                <div class="calendar-legend-item">
+                  <span class="calendar-legend-dot bg-rose-500"></span>
+                  <span>🔴 Terlambat</span>
+                </div>
+                <div class="calendar-legend-item">
+                  <span class="calendar-legend-dot bg-orange-500"></span>
+                  <span>🟠 Hari Ini</span>
+                </div>
+                <div class="calendar-legend-item">
+                  <span class="calendar-legend-dot bg-amber-500"></span>
+                  <span>🟡 Mulai Dekat</span>
+                </div>
+                <div class="calendar-legend-item">
+                  <span class="calendar-legend-dot bg-emerald-500"></span>
+                  <span>🟢 Masih Lama</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- KOLOM KANAN: Day Detail Panel -->
+          <div class="lg:col-span-4 fade-in-up" style="animation-delay:.10s">
+            <div class="panel-shell">
+              <h3 id="calendarPanelTitle" class="panel-header-title-full">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                Detail Tanggal
+              </h3>
+
+              <div id="calendarTaskPanel" class="panel-body">
+                <!-- Empty State Default -->
+                <div class="empty-state-premium">
+                  <div class="empty-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h4>Pilih tanggal di kalender</h4>
+                  <p>Klik tanggal yang memiliki dot untuk melihat daftar tugas.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL KONFIRMASI -->
+  <div id="confirmModal" class="modal-backdrop hidden" role="alertdialog" aria-modal="true"
+    aria-labelledby="confirmTitle">
+    <div class="modal-content max-w-sm text-center">
+      <div class="p-6 space-y-4">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto confirm-icon-wrap"><svg width="30"
+            height="30" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg></div>
+        <div>
+          <h3 id="confirmTitle" class="text-lg font-bold text-slate-900 mb-1">Konfirmasi</h3>
+          <p id="confirmMessage" class="text-sm text-slate-500 leading-relaxed"></p>
+        </div>
+        <div class="flex items-center justify-center gap-3 pt-1"><button type="button" id="confirmCancelBtn"
+            class="btn btn-secondary">Batal</button><button type="button" id="confirmOkBtn" class="btn btn-danger">Ya,
+            Hapus</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DETAIL TUGAS -->
+  <div id="taskDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true"
+    aria-labelledby="detailModalTitle">
+    <div class="modal-content max-w-lg">
+      <div class="p-6 border-b border-slate-100">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <h2 id="detailModalTitle" class="text-xl font-bold text-slate-900 mb-2 break-words"></h2>
+            <div id="detailModalBadges" class="flex flex-wrap gap-2"></div>
+          </div>
+          <button id="closeDetailModalBtn" class="btn-icon flex-shrink-0" aria-label="Tutup"><svg width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg></button>
+        </div>
+      </div>
+      <div id="detailModalBody" class="p-6 space-y-4"></div>
+      <div class="p-6 pt-0 flex flex-wrap gap-2">
+        <button id="detailToggleBtn" class="btn btn-secondary flex-1"></button>
+        <button id="detailEditBtn" class="btn btn-secondary">Edit</button>
+        <button id="detailDeleteBtn" class="btn btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- FLOATING ADD BUTTON (mobile only) -->
+<button class="fab-add-task" data-action="add-task" aria-label="Tambah Tugas">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"/>
+    <line x1="5" y1="12" x2="19" y2="12"/>
+  </svg>
+</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/course-picker.js"></script>
+
+  
+</body>
+
+</html>

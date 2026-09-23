@@ -1,0 +1,542 @@
+/* =========================================================
+   PriDesk — css/global.css (CLEAN & BLUR-FIXED VERSION)
+   ========================================================= */
+
+/* --- 1. GLOBAL RESET & BASE STYLES --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8fafc; color: #1e293b; overflow-x: hidden; }
+
+/* --- 2. DEADLINE BADGES --- */
+.deadline-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; transition: transform 0.2s ease; }
+.deadline-badge:hover { transform: scale(1.05); }
+.status-overdue { background: #fff1f2; color: #e11d48; }
+.status-today { background: #ffedd5; color: #ea580c; }
+.status-near { background: #fffbeb; color: #d97706; }
+.status-far, .status-done { background: #f0fdf4; color: #16a34a; }
+.status-none { background: #f1f5f9; color: #94a3b8; }
+
+/* --- 3. MODAL & TOAST (Dipertahankan agar tidak rusak) --- */
+.detail-section { padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+.detail-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 6px; }
+.detail-value { font-size: 0.9rem; color: #1e293b; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 300; pointer-events: none; display: flex; flex-direction: column; gap: 8px; }
+.toast-container > * { pointer-events: auto; background: rgba(15, 23, 42, 0.95); color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3); animation: toastIn 0.3s ease-out; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- 4. COURSE PICKER (Dipertahankan) --- */
+.course-picker { position: relative; width: 100%; }
+.course-picker-panel { position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); max-height: 240px; overflow-y: auto; display: none; }
+.course-picker.open .course-picker-panel { display: block; }
+.course-picker-option { padding: 10px 12px; cursor: pointer; font-size: 13px; font-weight: 600; color: #334155; transition: background 0.2s; }
+.course-picker-option:hover { background: #f1f5f9; }
+
+/* --- 5. FLOATING ACTION BUTTON (FAB) --- */
+.fab-add-task { display: none; }
+@media (max-width: 768px) {
+  .fab-add-task { display: flex !important; position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #2563eb; color: white; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5); z-index: 50; border: none; cursor: pointer; }
+}
+
+/* =========================================================
+   🔥 6. MOBILE SIDEBAR SYSTEM — ANTI-BLUR & CLICKABLE FIX
+   Ini adalah bagian KRUSIAL. Mengganti semua kode mobile sebelumnya.
+   ========================================================= */
+
+@media screen and (max-width: 768px) {
+  
+  /* A. BODY LOCK: Mencegah scroll & memisahkan konteks rendering */
+  body.sidebar-is-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  /* B. MATIKAN TOTAL ELEMEN DEKORASI SAAT SIDEBAR TERBUKA */
+  /* Ini penyebab utama blur/visual aneh di halaman lain */
+  body.sidebar-is-open .bg-decoration,
+  body.sidebar-is-open [class*="ambient"],
+  body.sidebar-is-open main::before,
+  body.sidebar-is-open main::after {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* C. OVERLAY: Gelap polos, TANPA BLUR */
+  #mobileOverlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(15, 23, 42, 0.6) !important; /* Warna solid transparan */
+    backdrop-filter: none !important; /* PAKSA MATI BLUR */
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    z-index: 9998 !important;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  body.sidebar-is-open #mobileOverlay {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* D. SIDEBAR: PUTIH POLOS, TANPA BLUR, Z-INDEX RAJA */
+  #sidebar.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    
+    /* BACKGROUND PUTIH SOLID - INI KUNCINYA AGAR TIDAK BLUR */
+    background: #ffffff !important; 
+    
+    box-shadow: 4px 0 24px rgba(0,0,0,0.1) !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    
+    /* MATIKAN SEMUA EFEK VISUAL WARISAN */
+    isolation: isolate !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  #sidebar.sidebar.mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  /* E. ISI MENU: PASTIKAN BISA DIKLIK & TAJAM */
+  #sidebar a,
+  #sidebar button,
+  #sidebar .sidebar-nav-item,
+  #sidebar nav,
+  #sidebar > * {
+    position: relative !important;
+    z-index: 100000 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    
+    /* MATIKAN BLUR DI DALAM SIDEBAR JUGA */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    
+    /* Optimasi Touch */
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* F. HEADER MOBILE: MINIMALIS & TIDAK MENGANGGU */
+  .mobile-header {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    z-index: 9990 !important;
+    pointer-events: none !important; /* Container tembus pandang */
+    background: transparent !important;
+    backdrop-filter: none !important; /* Pastikan header tidak nge-blur sidebar */
+    -webkit-backdrop-filter: none !important;
+  }
+
+  #mobileMenuBtn {
+    pointer-events: auto !important;
+    z-index: 9991 !important;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: #ffffff !important; /* Putih solid agar kontras */
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    color: #0f172a !important;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    backdrop-filter: none !important; /* Matikan glass effect di tombol */
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Sembunyikan logo/nama di header mobile agar rapi */
+  .mobile-header .brand-logo-mark,
+  .mobile-header [data-action="add-task"],
+  .mobile-header span,
+  .mobile-header div > span {
+      display: none !important;
+  }
+}
+
+/* Desktop Reset */
+@media (min-width: 769px) {
+  .mobile-header { display: none !important; }
+  #mobileOverlay { display: none !important; }
+  .fab-add-task { display: none !important; }
+  #sidebar.sidebar { transform: none !important; position: relative !important; }
+}
+
+/* =========================================================
+   🔥🔥 FIX AKAR MASALAH — HANCURKAN STACKING CONTEXT .app-shell
+   Ini yang bikin sidebar kabur & tak bisa diklik di semua
+   halaman NON-dashboard. Tempel di paling bawah global.css.
+   ========================================================= */
+@media screen and (max-width: 768px) {
+
+  /* 1. KUNCI UTAMA: .app-shell jangan jadi stacking context,
+        biar sidebar (z-tinggi) benar-benar paling atas global,
+        di atas overlay & header. Persis seperti di dashboard. */
+  .app-shell {
+    position: static !important;
+    z-index: auto !important;
+    isolation: auto !important;
+    transform: none !important;
+    filter: none !important;
+    will-change: auto !important;
+    contain: none !important;
+  }
+
+  /* 2. Overlay: tetap di bawah sidebar, TANPA blur */
+  #mobileOverlay,
+  .mobile-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    z-index: 90 !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  body.sidebar-is-open #mobileOverlay,
+  body.sidebar-is-open .mobile-overlay {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* 3. Sidebar: paling atas, putih solid, anti-blur total */
+  #sidebar.sidebar,
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    background: #0f172a !important;            /* sesuaikan tema gelap sidebar kamu */
+    box-shadow: 20px 0 40px -20px rgba(15, 23, 42, 0.5) !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    isolation: isolate !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+  }
+  #sidebar.sidebar.mobile-open,
+  .sidebar.mobile-open,
+  .sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  /* 4. Setiap item menu WAJIB bisa diklik */
+  #sidebar a,
+  #sidebar button,
+  #sidebar .sidebar-nav-item,
+  #sidebar nav,
+  #sidebar nav > *,
+  #sidebar > * {
+    position: relative !important;
+    z-index: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+  }
+
+  /* 5. Header mobile: di bawah sidebar, container tembus klik,
+        hanya tombol hamburger yang aktif. Logo & tombol tambah
+        disembunyikan (sesuai yang sudah kamu minta sebelumnya). */
+  .mobile-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  #mobileMenuBtn {
+    pointer-events: auto !important;
+    z-index: 1 !important;
+  }
+  .mobile-header .brand-logo-mark,
+  .mobile-header [data-action="add-task"],
+  .mobile-header > div:not(:first-child):not(#mobileMenuBtn),
+  .mobile-header span,
+  .mobile-header div > span {
+    display: none !important;
+  }
+
+  /* 6. Dekorasi latar jangan pernah menghalangi */
+  .bg-decoration,
+  .bg-orb,
+  .bg-grid {
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+
+  /* 7. Lock scroll body saat menu open (anti bug iOS) */
+  body.sidebar-is-open {
+    overflow: hidden !important;
+  }
+}
+
+/* =========================================================
+   🔥 COURSE PICKER PANEL — Fix Posisi + Bypass Clip Modal
+   ========================================================= */
+.course-picker.open .course-picker-panel {
+  display: block !important;
+
+  /* Paksa posisi benar-benar di bawah input */
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+
+  /* Pastikan di atas elemen lain */
+  z-index: 99999 !important;
+
+  /* Reset transform yang mungkin dipakai versi lama */
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+
+  /* Ukuran tetap */
+  max-height: 240px !important;
+  width: auto !important;
+}
+
+/* Kalau ada inline style dari JS (positionPanel), paksa override */
+.course-picker.open .course-picker-panel[style] {
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+}
+
+/* =========================================================
+   🔥 COURSE PICKER — Premium Look
+   ========================================================= */
+
+.course-picker {
+  position: relative;
+  width: 100%;
+}
+
+.course-picker-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.course-picker-input {
+  padding-right: 44px !important;
+}
+
+/* Chevron diposisikan di dalam input */
+.course-picker-chevron {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1), color 0.2s;
+}
+
+.course-picker.open .course-picker-chevron {
+  transform: translateY(-50%) rotate(180deg);
+  color: #3b82f6;
+}
+
+/* Panel */
+.course-picker-panel {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow:
+    0 20px 40px -12px rgba(15, 23, 42, 0.15),
+    0 8px 16px -8px rgba(15, 23, 42, 0.08);
+  padding: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 99999;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.98);
+  transform-origin: top center;
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.34, 1.4, 0.64, 1),
+    visibility 0.22s;
+
+  display: block !important;
+}
+
+.course-picker.open .course-picker-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.course-picker:not(.open) .course-picker-panel {
+  pointer-events: none;
+}
+
+/* Option — baris rapi dengan icon + text + check */
+.course-picker-option {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.course-picker-option:hover,
+.course-picker-option.highlighted {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #1d4ed8;
+  transform: translateX(2px);
+}
+
+.course-picker-option.selected {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1d4ed8;
+}
+
+/* Icon */
+.course-picker-option-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  transition: all 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.course-picker-option:hover .course-picker-option-icon {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  transform: scale(1.1) rotate(-6deg);
+}
+
+/* Text */
+.course-picker-option-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Checkmark — di KANAN */
+.course-picker-option-check,
+.course-picker-option > svg {
+  margin-left: auto;
+  color: #10b981;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.course-picker-option.selected .course-picker-option-check,
+.course-picker-option.selected > svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Add new (tambah custom) */
+.course-picker-option.add-new {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 1px dashed #86efac;
+  margin-top: 4px;
+  color: #059669;
+}
+
+.course-picker-option.add-new:hover {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-style: solid;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.course-picker-option.add-new .course-picker-option-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+}
+
+.course-picker-option.add-new:hover .course-picker-option-icon {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Scrollbar cantik */
+.course-picker-panel::-webkit-scrollbar { width: 6px; }
+.course-picker-panel::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.course-picker-empty {
+  text-align: center;
+  padding: 20px 12px;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 500;
+}
