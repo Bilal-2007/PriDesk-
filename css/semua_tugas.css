@@ -1868,3 +1868,19 @@ body {
   align-items: center !important;
   gap: 4px !important;
 }
+/* =========================================================
+   Deskripsi Card — 1 Baris (Browser Compatible)
+   ========================================================= */
+#allTasksList .task-card p {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  line-clamp: 1 !important;              /* ⚡ standar */
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 0.78rem !important;
+  color: #64748b !important;
+  line-height: 1.5 !important;
+  margin-top: 4px !important;
+  max-height: 1.5em !important;          /* ⚡ fallback terakhir */
+}

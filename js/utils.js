@@ -41,18 +41,23 @@ function getDeadlineStatus(deadlineStr, completed) {
   if (!deadlineStr) {
     return { label: 'Tanpa Deadline', emoji: '📋', colorClass: 'status-none', isOverdue: false, isToday: false, isNear: false };
   }
+
   var now = new Date();
-  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   var d = new Date(deadlineStr);
   if (isNaN(d.getTime())) {
     return { label: 'Tanpa Deadline', emoji: '📋', colorClass: 'status-none', isOverdue: false, isToday: false, isNear: false };
   }
+
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   var targetDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   var diffDays = Math.round((targetDay - today) / (1000 * 60 * 60 * 24));
 
-  if (d < now && diffDays < 0) {
+  // ⚡ FIX: cek jam-menit duluan — kalau udah lewat, itu TERLAMBAT
+  if (d < now) {
     return { label: 'Terlambat', emoji: '🔴', colorClass: 'status-overdue', isOverdue: true, isToday: false, isNear: false };
   }
+
+  // Deadline masih di masa depan (jam belum lewat)
   if (diffDays === 0) {
     return { label: 'Hari Ini', emoji: '🟠', colorClass: 'status-today', isOverdue: false, isToday: true, isNear: false };
   }
@@ -136,4 +141,32 @@ function calculateStats(tasks) {
   var courses = Object.keys(courseMap).map(function (k) { return courseMap[k]; });
 
   return { total: total, active: active, completed: completed, overdue: overdue, progress: progress, upcoming: upcoming, courses: courses };
+}
+
+function getTimeRemaining(deadlineStr) {
+  if (!deadlineStr) return null;
+  var d = new Date(deadlineStr);
+  if (isNaN(d.getTime())) return null;
+
+  var now = new Date();
+  var diff = d - now;
+  var isLate = diff < 0;
+  diff = Math.abs(diff);
+
+  var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  var parts = [];
+  if (days > 0) parts.push(days + ' hari');
+  if (hours > 0) parts.push(hours + ' jam');
+  if (minutes > 0 && days === 0) parts.push(minutes + ' menit');
+
+  var text = parts.length > 0 ? parts.join(' ') : 'kurang dari 1 menit';
+
+  return {
+    text: text,
+    isLate: isLate,
+    label: isLate ? 'Terlambat ' + text + ' yang lalu' : 'Sisa ' + text
+  };
 }

@@ -327,16 +327,17 @@ function initEventListeners() {
   var mobileMenuBtn = document.getElementById('mobileMenuBtn');
   var mobileOverlay = document.getElementById('mobileOverlay');
 
-  if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var sb = document.getElementById('sidebar');
-      var isOpen = sb && sb.classList.contains('mobile-open');
-      if (isOpen) closeMobileSidebar();
-      else openMobileSidebar();
-    });
-  }
+if (mobileMenuBtn) {
+  mobileMenuBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();   // ⚡ KUNCI: stop handler lain
+    var sb = document.getElementById('sidebar');
+    var isOpen = sb && sb.classList.contains('mobile-open');
+    if (isOpen) closeMobileSidebar();
+    else openMobileSidebar();
+  }, true);                          // ⚡ CAPTURE phase
+}
 
   if (mobileOverlay) {
     mobileOverlay.addEventListener('click', function (e) {
@@ -346,12 +347,12 @@ function initEventListeners() {
     });
   }
 
-  var sidebarLinks = document.querySelectorAll('#sidebar a');
-  sidebarLinks.forEach(function (link) {
-    link.addEventListener('click', function () {
-      setTimeout(closeMobileSidebar, 100);
-    });
+var sidebarItems = document.querySelectorAll('#sidebar a, #sidebar button, #sidebar [data-action]');
+sidebarItems.forEach(function (item) {
+  item.addEventListener('click', function () {
+    setTimeout(closeMobileSidebar, 150);
   });
+});
 
   /* =========================================================
      EVENT DELEGATION — Tombol [data-action]

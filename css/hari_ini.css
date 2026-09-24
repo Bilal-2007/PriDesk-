@@ -663,3 +663,142 @@ body {
     padding-right: 12px !important;
   }
 }
+
+/* Fallback: .task-card tampil sama seperti .today-task-card */
+
+/* =========================================================
+   Fix: Card versi ui.js tampil konsisten + deskripsi pendek
+   ========================================================= */
+#todayTasksList .task-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  cursor: pointer;
+}
+
+#todayTasksList .task-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: #cbd5e1;
+  transition: all 0.25s ease;
+}
+
+#todayTasksList .task-card.overdue-card::before {
+  background: linear-gradient(180deg, #fb7185, #e11d48);
+}
+
+#todayTasksList .task-card.completed-card::before {
+  background: linear-gradient(180deg, #34d399, #10b981);
+}
+
+#todayTasksList .task-card:hover {
+  border-color: #cbd5e1;
+  transform: translateX(3px);
+  box-shadow:
+    0 10px 24px -12px rgba(15, 23, 42, 0.15),
+    0 0 0 1px rgba(37, 99, 235, 0.05);
+}
+
+#todayTasksList .task-card.completed-card {
+  opacity: 0.65;
+  background: #f8fafc;
+}
+
+/* ⚡ DESKRIPSI — cuma 1 baris, sisanya di modal detail */
+#todayTasksList .task-card p {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 0.78rem !important;
+  color: #64748b !important;
+  line-height: 1.5 !important;
+  margin-top: 4px !important;
+  max-width: 100% !important;
+}
+
+/* ⚡ TOMBOL AKSI — hidden by default, muncul saat hover */
+#todayTasksList .task-card .task-actions {
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+#todayTasksList .task-card:hover .task-actions {
+  opacity: 1 !important;
+}
+
+/* Judul */
+#todayTasksList .task-card h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+#todayTasksList .task-card.completed-card h3 {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+/* Checkbox custom */
+#todayTasksList .task-card .task-checkbox-wrapper {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+#todayTasksList .task-card .task-checkbox-wrapper input {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+#todayTasksList .task-card .task-checkbox-visual {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 2px solid #cbd5e1;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#todayTasksList .task-card .task-checkbox-wrapper:hover .task-checkbox-visual {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+#todayTasksList .task-card .task-checkbox-wrapper input:checked ~ .task-checkbox-visual {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+}
+
+#todayTasksList .task-card .task-checkbox-wrapper input:checked ~ .task-checkbox-visual::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+}

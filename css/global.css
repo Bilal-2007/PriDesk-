@@ -37,153 +37,91 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8f
   .fab-add-task { display: flex !important; position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #2563eb; color: white; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5); z-index: 50; border: none; cursor: pointer; }
 }
 
-/* =========================================================
-   🔥 6. MOBILE SIDEBAR SYSTEM — ANTI-BLUR & CLICKABLE FIX
-   Ini adalah bagian KRUSIAL. Mengganti semua kode mobile sebelumnya.
-   ========================================================= */
+@media (max-width: 768px) {
 
-@media screen and (max-width: 768px) {
-  
-  /* A. BODY LOCK: Mencegah scroll & memisahkan konteks rendering */
-  body.sidebar-is-open {
-    overflow: hidden !important;
-    position: fixed !important;
-    width: 100% !important;
-    height: 100% !important;
-    top: 0 !important;
-    left: 0 !important;
-  }
+  #mobileMenuBtn {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 13px !important;
+    padding: 0 !important;
+    margin: 0 !important;
 
-  /* B. MATIKAN TOTAL ELEMEN DEKORASI SAAT SIDEBAR TERBUKA */
-  /* Ini penyebab utama blur/visual aneh di halaman lain */
-  body.sidebar-is-open .bg-decoration,
-  body.sidebar-is-open [class*="ambient"],
-  body.sidebar-is-open main::before,
-  body.sidebar-is-open main::after {
-    display: none !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow:
+      0 6px 16px -4px rgba(15, 23, 42, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 
-  /* C. OVERLAY: Gelap polos, TANPA BLUR */
-  #mobileOverlay {
-    position: fixed !important;
-    inset: 0 !important;
-    background: rgba(15, 23, 42, 0.6) !important; /* Warna solid transparan */
-    backdrop-filter: none !important; /* PAKSA MATI BLUR */
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-    z-index: 9998 !important;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-
-  body.sidebar-is-open #mobileOverlay {
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-  }
-
-  /* D. SIDEBAR: PUTIH POLOS, TANPA BLUR, Z-INDEX RAJA */
-  #sidebar.sidebar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    width: 280px !important;
-    max-width: 85vw !important;
-    
-    /* BACKGROUND PUTIH SOLID - INI KUNCINYA AGAR TIDAK BLUR */
-    background: #ffffff !important; 
-    
-    box-shadow: 4px 0 24px rgba(0,0,0,0.1) !important;
-    transform: translateX(-100%) !important;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    
-    z-index: 99999 !important;
-    pointer-events: auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow-y: auto !important;
-    
-    /* MATIKAN SEMUA EFEK VISUAL WARISAN */
-    isolation: isolate !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-    -webkit-mask-image: none !important;
-  }
-
-  #sidebar.sidebar.mobile-open {
-    transform: translateX(0) !important;
-  }
-
-  /* E. ISI MENU: PASTIKAN BISA DIKLIK & TAJAM */
-  #sidebar a,
-  #sidebar button,
-  #sidebar .sidebar-nav-item,
-  #sidebar nav,
-  #sidebar > * {
-    position: relative !important;
-    z-index: 100000 !important;
-    pointer-events: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     cursor: pointer !important;
-    
-    /* MATIKAN BLUR DI DALAM SIDEBAR JUGA */
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-    
-    /* Optimasi Touch */
-    touch-action: manipulation !important;
+    position: relative !important;
+    overflow: hidden !important;
+
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
     -webkit-tap-highlight-color: transparent !important;
   }
 
-  /* F. HEADER MOBILE: MINIMALIS & TIDAK MENGANGGU */
-  .mobile-header {
-    position: fixed !important;
-    top: 0; left: 0; right: 0;
-    z-index: 9990 !important;
-    pointer-events: none !important; /* Container tembus pandang */
-    background: transparent !important;
-    backdrop-filter: none !important; /* Pastikan header tidak nge-blur sidebar */
-    -webkit-backdrop-filter: none !important;
+  /* Sembunyikan SVG asli */
+  #mobileMenuBtn svg {
+    display: none !important;
   }
 
-  #mobileMenuBtn {
-    pointer-events: auto !important;
-    z-index: 9991 !important;
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: #ffffff !important; /* Putih solid agar kontras */
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
-    color: #0f172a !important;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    backdrop-filter: none !important; /* Matikan glass effect di tombol */
-    -webkit-backdrop-filter: none !important;
+  /* ⚡ GARIS ATAS + GARIS TENGAH (via box-shadow) */
+  #mobileMenuBtn::before {
+    content: '' !important;
+    position: absolute !important;
+    width: 20px !important;
+    height: 2px !important;
+    background: #0f172a !important;
+    border-radius: 2px !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, calc(-50% - 6px)) !important;
+    box-shadow: 0 6px 0 #0f172a !important; /* ⚡ garis tengah */
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
   }
 
-  /* Sembunyikan logo/nama di header mobile agar rapi */
-  .mobile-header .brand-logo-mark,
-  .mobile-header [data-action="add-task"],
-  .mobile-header span,
-  .mobile-header div > span {
-      display: none !important;
+  /* ⚡ GARIS BAWAH */
+  #mobileMenuBtn::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 20px !important;
+    height: 2px !important;
+    background: #0f172a !important;
+    border-radius: 2px !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, calc(-50% + 6px)) !important;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
+  }
+
+  /* Hover */
+  #mobileMenuBtn:hover {
+    transform: scale(1.06) !important;
+    box-shadow:
+      0 10px 22px -6px rgba(99, 102, 241, 0.4),
+      0 0 0 1px rgba(99, 102, 241, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+
+  #mobileMenuBtn:active {
+    transform: scale(0.94) !important;
+  }
+
+  /* ⚡ SAAT SIDEBAR TERBUKA → jadi X */
+  body.sidebar-is-open #mobileMenuBtn::before {
+    transform: translate(-50%, -50%) rotate(45deg) !important;
+    box-shadow: none !important; /* garis tengah hilang */
+  }
+
+  body.sidebar-is-open #mobileMenuBtn::after {
+    transform: translate(-50%, -50%) rotate(-45deg) !important;
   }
 }
-
-/* Desktop Reset */
-@media (min-width: 769px) {
-  .mobile-header { display: none !important; }
-  #mobileOverlay { display: none !important; }
-  .fab-add-task { display: none !important; }
-  #sidebar.sidebar { transform: none !important; position: relative !important; }
-}
-
 /* =========================================================
    🔥🔥 FIX AKAR MASALAH — HANCURKAN STACKING CONTEXT .app-shell
    Ini yang bikin sidebar kabur & tak bisa diklik di semua
@@ -539,4 +477,524 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8f
   color: #94a3b8;
   font-size: 13px;
   font-weight: 500;
+}
+
+/* =========================================================
+   TASK DETAIL MODAL — Premium
+   ========================================================= */
+#taskDetailModal .modal-content {
+  max-width: 520px;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow:
+    0 30px 60px -20px rgba(15, 23, 42, 0.35),
+    0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+
+/* Header */
+#taskDetailModal .modal-content > div:first-child {
+  padding: 24px 28px 20px;
+  background:
+    radial-gradient(ellipse 300px 100px at 0% 0%, rgba(99, 102, 241, 0.06), transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+  border-bottom: 1px solid #f1f5f9;
+}
+
+#detailModalTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  line-height: 1.3;
+}
+
+/* Badges row */
+#detailModalBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#detailModalBadges > span {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 5px 12px !important;
+  border-radius: 999px !important;
+  letter-spacing: 0.01em;
+}
+
+#detailModalBadges > span:not([class*="deadline-badge"]) {
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0) !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em !important;
+  font-size: 0.68rem !important;
+}
+
+/* Body */
+#detailModalBody {
+  padding: 22px 28px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.detail-section {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent;
+}
+
+.detail-label {
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8 !important;
+  margin-bottom: 6px !important;
+}
+
+.detail-value {
+  font-size: 0.92rem !important;
+  color: #1e293b !important;
+  line-height: 1.6 !important;
+  font-weight: 500;
+}
+
+/* Time remaining badge — di bawah tenggat waktu */
+.detail-time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  animation: timeBadgeIn 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+.detail-time-badge.detail-time-late {
+  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  box-shadow: 0 4px 12px -4px rgba(244, 63, 94, 0.3);
+}
+
+.detail-time-badge.detail-time-ok {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.3);
+}
+
+@keyframes timeBadgeIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Footer buttons */
+#taskDetailModal .modal-content > div:last-child {
+  padding: 16px 24px 20px;
+  background: #fafbff;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 8px;
+}
+
+#taskDetailModal #detailToggleBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 6px 14px -4px rgba(16, 185, 129, 0.45) !important;
+  font-weight: 700;
+}
+
+#taskDetailModal #detailToggleBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -6px rgba(16, 185, 129, 0.55) !important;
+}
+
+#taskDetailModal #detailEditBtn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-weight: 700;
+}
+
+#taskDetailModal #detailEditBtn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+#taskDetailModal #detailDeleteBtn {
+  background: linear-gradient(135deg, #f43f5e, #e11d48) !important;
+  border: none !important;
+  box-shadow: 0 6px 14px -4px rgba(225, 29, 72, 0.45) !important;
+  font-weight: 700;
+}
+
+#taskDetailModal #detailDeleteBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -6px rgba(225, 29, 72, 0.55) !important;
+}
+
+/* Close button */
+#closeDetailModalBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.04);
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+#closeDetailModalBtn:hover {
+  background: rgba(244, 63, 94, 0.1);
+  color: #e11d48;
+  transform: rotate(90deg);
+}
+
+/* =========================================================
+   HAMBURGER MENU — Posisi Kanan + Animasi X
+   ========================================================= */
+@media (max-width: 768px) {
+  /* Header: hamburger ke kanan */
+  .mobile-header {
+    justify-content: flex-end !important;
+    padding: 12px 16px !important;
+    pointer-events: none !important;
+  }
+  .mobile-header > * {
+    pointer-events: auto !important;
+  }
+
+  /* Tombol hamburger — glass bulat cantik */
+  #mobileMenuBtn {
+    width: 46px !important;
+    height: 46px !important;
+    border-radius: 14px !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow:
+      0 6px 16px -4px rgba(15, 23, 42, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    color: #0f172a !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  }
+
+  #mobileMenuBtn:hover {
+    transform: scale(1.08) !important;
+    box-shadow:
+      0 10px 22px -6px rgba(99, 102, 241, 0.35),
+      0 0 0 1px rgba(99, 102, 241, 0.25) !important;
+  }
+
+  #mobileMenuBtn:active {
+    transform: scale(0.94) !important;
+  }
+
+  /* Icon */
+  #mobileMenuBtn svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  /* Tiap garis — animasi transform */
+  #mobileMenuBtn svg line {
+    transform-origin: center !important;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
+  }
+
+  /* ⚡ SAAT SIDEBAR TERBUKA → jadi X */
+  body.sidebar-is-open #mobileMenuBtn svg line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg) !important;
+  }
+  body.sidebar-is-open #mobileMenuBtn svg line:nth-child(2) {
+    opacity: 0 !important;
+    transform: scaleX(0) !important;
+  }
+  body.sidebar-is-open #mobileMenuBtn svg line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg) !important;
+  }
+}
+
+/* =========================================================
+   FLATPICKR — Restore Default Layout (Anti Rusak)
+   ========================================================= */
+
+/* Container utama */
+.flatpickr-calendar {
+  display: block !important;
+  width: 307.875px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.2) !important;
+  background: #ffffff !important;
+}
+
+/* Header bulan */
+.flatpickr-months {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px !important;
+  background: #f8fafc !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.flatpickr-month {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  height: 36px !important;
+}
+
+.flatpickr-current-month {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-current-month .numInputWrapper {
+  width: 60px !important;
+  display: inline-flex !important;
+}
+
+.flatpickr-current-month .numInputWrapper span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0.5 !important;
+}
+
+/* Arrow prev/next */
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  color: #475569 !important;
+  position: static !important;
+  transition: all 0.2s ease !important;
+}
+
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.flatpickr-prev-month svg,
+.flatpickr-next-month svg {
+  width: 14px !important;
+  height: 14px !important;
+  fill: currentColor !important;
+}
+
+/* Weekday header */
+.flatpickr-weekdays {
+  display: flex !important;
+  padding: 8px 8px 0 !important;
+  background: #f8fafc !important;
+}
+
+.flatpickr-weekdaycontainer {
+  display: flex !important;
+  width: 100% !important;
+}
+
+.flatpickr-weekday {
+  flex: 1 !important;
+  text-align: center !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* Days container */
+.flatpickr-days {
+  display: flex !important;
+  width: 100% !important;
+  padding: 0 8px 8px !important;
+  background: #f8fafc !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.dayContainer {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+/* Setiap tanggal */
+.flatpickr-day {
+  flex: 0 0 14.28% !important;
+  max-width: 14.28% !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  border-radius: 8px !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+  line-height: 1 !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.flatpickr-day:hover {
+  background: #e0e7ff !important;
+  color: #4338ca !important;
+}
+
+.flatpickr-day.today {
+  border: 1px solid #6366f1 !important;
+  color: #4f46e5 !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  color: #ffffff !important;
+  border-color: #4f46e5 !important;
+  box-shadow: 0 4px 10px -2px rgba(99, 102, 241, 0.5) !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  color: #cbd5e1 !important;
+  cursor: default !important;
+}
+
+.flatpickr-day.flatpickr-disabled {
+  color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+}
+
+/* Time picker (jam) */
+.flatpickr-time {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 12px 16px !important;
+  border-top: 1px solid #f1f5f9 !important;
+  background: #ffffff !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.flatpickr-time input {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  text-align: center !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 6px 8px !important;
+  width: 40px !important;
+  height: auto !important;
+  background: #f8fafc !important;
+  transition: all 0.15s ease !important;
+}
+
+.flatpickr-time input:focus {
+  outline: none !important;
+  border-color: #6366f1 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+.flatpickr-time .flatpickr-time-separator,
+.flatpickr-time .flatpickr-am-pm {
+  font-weight: 700 !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+/* Tombol aksi di bawah */
+.flatpickr-calendar .flatpickr-time + .flatpickr-today-btn {
+  display: flex !important;
+}
+
+/* Tombol "Hari Ini" dan "Hapus" */
+.flatpickr-calendar button.flatpickr-today,
+.flatpickr-calendar button.flatpickr-clear {
+  background: #f1f5f9 !important;
+  border: none !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.flatpickr-calendar button.flatpickr-today:hover,
+.flatpickr-calendar button.flatpickr-clear:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* =========================================================
+   🔥 FIX — Tombol ☰ DI ATAS overlay & sidebar
+   ========================================================= */
+@media (max-width: 768px) {
+  .mobile-header {
+    z-index: 999999 !important;
+    pointer-events: none !important;
+  }
+
+  #mobileMenuBtn {
+    z-index: 1000000 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+  }
+
+  #sidebar.sidebar {
+    z-index: 99999 !important;
+  }
+
+  #mobileOverlay {
+    z-index: 9998 !important;
+  }
 }
