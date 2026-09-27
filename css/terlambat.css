@@ -603,6 +603,18 @@ body {
   h1 { font-size: 1.65rem !important; }
 }
 
+@media (max-width: 768px) {
+  .main-content { height: 100dvh; }
+  html, body { max-height: none; overflow: auto; }
+}
+
+@media (max-width: 768px) {
+  .btn-icon, #overdueTasksList .task-actions .btn-icon {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

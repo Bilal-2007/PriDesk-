@@ -525,28 +525,5 @@
   <script src="js/app.js"></script>
 
 
-
-  <script>
-    /* 🔥 Force clean sidebar & overlay saat halaman dimuat */
-    (function () {
-      function clean() {
-        var s = document.getElementById('sidebar');
-        var o = document.getElementById('mobileOverlay');
-        if (s) s.classList.remove('mobile-open', 'open');
-        if (o) {
-          o.classList.add('hidden');
-          o.style.display = 'none';
-          o.style.pointerEvents = 'none';
-        }
-        document.body.style.overflow = '';
-      }
-      clean();
-      window.addEventListener('load', clean);
-      setTimeout(clean, 100);
-      setTimeout(clean, 500);
-      setTimeout(clean, 1500);
-    })();
-  </script>
 </body>
-
 </html>

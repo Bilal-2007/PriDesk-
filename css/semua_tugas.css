@@ -1612,6 +1612,25 @@ body {
 /* ========================================================
    REDUCED MOTION
    ======================================================== */
+@media (max-width: 768px) {
+  .app-shell { min-height: 100dvh; height: auto; }
+  .main-content { height: 100dvh; }
+  html, body { max-height: none; overflow: auto; }
+}
+
+@media (max-width: 768px) {
+  .btn-icon, #allTasksList .task-actions .btn-icon {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.bulk-active .fab-add-task {
+    display: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

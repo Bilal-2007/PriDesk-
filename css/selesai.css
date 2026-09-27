@@ -662,6 +662,18 @@ body {
   .empty-state-completed { padding: 36px 16px; }
 }
 
+@media (max-width: 768px) {
+  .main-content { height: 100dvh; }
+  html, body { max-height: none; overflow: auto; }
+}
+
+@media (max-width: 768px) {
+  .btn-icon, #doneTasksList .completed-actions .btn-icon {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -949,6 +961,17 @@ body {
 
   #doneTasksList .task-title-completed {
     font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content > div {
+    padding: 16px !important;
+  }
+}
+@media (max-width: 480px) {
+  .main-content > div {
+    padding: 12px !important;
   }
 }
 

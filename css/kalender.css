@@ -708,8 +708,18 @@ body {
 }
 
 @media (max-width: 420px) {
-  .calendar-shell { padding: 12px; }
-  .calendar-day { min-height: 52px; }
+  .calendar-shell { padding: 8px; overflow-x: hidden; }
+  .calendar-day { min-height: 44px; padding: 2px 1px; }
+  .calendar-day span:first-child { font-size: 0.7rem; margin-bottom: 2px; }
+  .cal-dot { width: 4px; height: 4px; }
+  .calendar-days-header { gap: 2px; margin-bottom: 6px; padding-bottom: 6px; }
+  .calendar-grid { gap: 2px; }
+  .calendar-day-name { font-size: 8.5px; }
+}
+
+@media (max-width: 768px) {
+  .main-content { height: 100dvh; }
+  html, body { max-height: none; overflow: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

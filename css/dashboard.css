@@ -1728,6 +1728,17 @@ body {
   }
 }
 
+@media (max-width: 768px) {
+  .main-content > div {
+    padding: 20px 16px !important;
+  }
+}
+@media (max-width: 480px) {
+  .main-content > div {
+    padding: 16px 12px !important;
+  }
+}
+
 /* ========================================================
    FULL WIDTH UTILITIES
    ======================================================== */
@@ -1750,6 +1761,12 @@ body {
 /* ========================================================
    REDUCED MOTION
    ======================================================== */
+@media (max-width: 768px) {
+  .app-shell { min-height: 100dvh; height: auto; }
+  .main-content { height: 100dvh; }
+  html, body { max-height: none; overflow: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
