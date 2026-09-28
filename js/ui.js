@@ -64,6 +64,11 @@ function openTaskModal(task) {
     if (fp2 && fp2._flatpickr) fp2._flatpickr.clear();
   }
 
+  // Clear image preview when opening modal (fresh state)
+  clearImagePreview();
+  // Render image preview section (shows file input; preloads existing image if editing)
+  renderImagePreviewSection(isEdit ? task : null);
+
   modal.classList.remove("hidden");
   document.body.style.overflow = "hidden";
   setTimeout(function () {
@@ -76,6 +81,413 @@ function closeTaskModal() {
   var modal = document.getElementById("taskModal");
   if (modal) modal.classList.add("hidden");
   document.body.style.overflow = "";
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW HELPERS (Modal)
+   ========================================================= */
+function clearImagePreview() {
+  var preview = document.getElementById("imagePreviewContainer");
+  if (preview) preview.remove();
+  var fileInput = document.getElementById("taskImage");
+  if (fileInput) {
+    fileInput._imageRemoved = true;
+    fileInput.value = "";
+  }
+}
+
+function renderImagePreviewSection(task) {
+  var form = document.getElementById("taskForm");
+  if (!form) return;
+
+  clearImagePreview();
+
+  // Reset removal flag when modal is opened fresh
+  var fi = document.getElementById("taskImage");
+  if (fi) fi._imageRemoved = false;
+
+  // ====== Inject CSS sekali saja (idempotent) ======
+  if (!document.getElementById("imagePreviewStyles")) {
+    var style = document.createElement("style");
+    style.id = "imagePreviewStyles";
+    style.textContent = `
+      /* ==== Wrapper ==== */
+      .img-upload-wrap {
+        margin-top: 12px;
+        animation: imgFadeIn .35s ease both;
+      }
+      @keyframes imgFadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .img-upload-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .img-upload-label .label-text {
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #94a3b8;
+      }
+      .img-upload-label .label-badge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+        color: #04222e;
+        box-shadow: 0 4px 12px rgba(14,165,233,.35);
+      }
+
+      /* ==== Dropzone ==== */
+      .img-dropzone {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 22px 16px;
+        border-radius: 16px;
+        border: 2px dashed rgba(56,189,248,.45);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(56,189,248,.10), transparent 55%),
+          radial-gradient(circle at 80% 80%, rgba(168,85,247,.10), transparent 55%),
+          rgba(15, 23, 42, 0.35);
+        cursor: pointer;
+        transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease;
+        overflow: hidden;
+      }
+      .img-dropzone::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.06) 50%, transparent 70%);
+        transform: translateX(-100%);
+        transition: transform .8s ease;
+        pointer-events: none;
+      }
+      .img-dropzone:hover::before { transform: translateX(100%); }
+      .img-dropzone:hover {
+        border-color: #38bdf8;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(56,189,248,.18), transparent 55%),
+          radial-gradient(circle at 80% 80%, rgba(168,85,247,.18), transparent 55%),
+          rgba(15, 23, 42, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(56,189,248,.18);
+      }
+      .img-dropzone.is-dragging {
+        border-color: #22d3ee;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(34,211,238,.25), transparent 60%),
+          rgba(15, 23, 42, 0.6);
+        transform: scale(1.015);
+        box-shadow: 0 18px 42px rgba(34,211,238,.35);
+      }
+      .img-dropzone.has-file {
+        padding: 0;
+        border-style: solid;
+        border-color: rgba(56,189,248,.35);
+        cursor: default;
+      }
+
+      .img-dropzone .dz-icon {
+        font-size: 1.8rem;
+        line-height: 1;
+        filter: drop-shadow(0 6px 14px rgba(56,189,248,.5));
+        animation: dzFloat 3s ease-in-out infinite;
+      }
+      @keyframes dzFloat {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-4px); }
+      }
+      .img-dropzone .dz-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #e2e8f0;
+      }
+      .img-dropzone .dz-sub {
+        font-size: 0.7rem;
+        color: #94a3b8;
+      }
+
+      .img-file-input { display: none; }
+
+      /* ==== Preview area ==== */
+      .image-preview-area {
+        margin-top: 12px;
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        animation: previewPop .4s cubic-bezier(.2,.9,.3,1.4) both;
+      }
+      @keyframes previewPop {
+        from { opacity: 0; transform: scale(.94); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+
+      .image-preview-area img {
+        display: block;
+        width: 100%;
+        max-height: 240px;
+        object-fit: cover;
+        border-radius: 16px;
+        transition: transform .5s ease;
+      }
+      .image-preview-area:hover img { transform: scale(1.03); }
+
+      .image-preview-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px;
+        background: linear-gradient(to top, rgba(2,6,23,.85), transparent 55%);
+        opacity: 0;
+        transition: opacity .3s ease;
+        border-radius: 16px;
+      }
+      .image-preview-area:hover .image-preview-overlay { opacity: 1; }
+
+      .image-preview-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .image-preview-meta .meta-name {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 220px;
+      }
+      .image-preview-meta .meta-size {
+        font-size: 0.65rem;
+        color: #94a3b8;
+      }
+
+      .image-preview-actions {
+        display: flex;
+        gap: 6px;
+      }
+      .image-preview-actions button {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,.15);
+        background: rgba(15,23,42,.7);
+        color: #f1f5f9;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: transform .2s ease, background .2s ease, border-color .2s ease;
+        backdrop-filter: blur(6px);
+      }
+      .image-preview-actions button:hover {
+        transform: translateY(-2px);
+        background: rgba(15,23,42,.95);
+      }
+      .image-preview-actions .btn-replace:hover { border-color: #38bdf8; color: #38bdf8; }
+      .image-preview-actions .btn-remove:hover  { border-color: #ef4444; color: #ef4444; }
+
+      /* ==== Loading skeleton ==== */
+      .image-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 26px 16px;
+        border-radius: 16px;
+        background: rgba(15,23,42,.45);
+        border: 1px solid rgba(56,189,248,.2);
+      }
+      .image-loading .spinner {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 3px solid rgba(56,189,248,.25);
+        border-top-color: #38bdf8;
+        animation: spin .8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .image-loading span {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        font-weight: 600;
+      }
+
+      .hidden { display: none !important; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // ====== Build wrapper ======
+  var container = document.createElement("div");
+  container.id = "imagePreviewContainer";
+  container.className = "img-upload-wrap";
+  container.innerHTML = `
+    <div class="img-upload-label">
+      <span class="label-text">📎 Lampiran Foto (Opsional)</span>
+      <span class="label-badge">Max 5MB</span>
+    </div>
+
+    <label class="img-dropzone" id="imageDropzone" for="taskImage">
+      <input type="file" id="taskImage" accept="image/*" class="img-file-input">
+      <div class="dz-icon">📷</div>
+      <div class="dz-title">Klik atau seret foto ke sini</div>
+      <div class="dz-sub">JPG · PNG · WebP — otomatis dikompres</div>
+    </label>
+
+    <div id="imagePreview" class="image-preview-area hidden"></div>
+  `;
+
+  // Insert before action buttons
+  var btnDiv = form.querySelector('.flex.items-center.justify-end');
+  if (btnDiv) {
+    btnDiv.parentNode.insertBefore(container, btnDiv);
+  } else {
+    form.appendChild(container);
+  }
+
+  // ====== Show existing image if editing ======
+  if (task && task.image) {
+    showImagePreview(task.image, task.imageName || "Foto tersimpan", null);
+  }
+
+  // ====== Wire up file input + drag & drop ======
+  var fileInput = document.getElementById("taskImage");
+  var dropzone  = document.getElementById("imageDropzone");
+
+  function handleFile(file) {
+    if (!file) return;
+
+    if (!file.type || !file.type.startsWith("image/")) {
+      showToast("File harus berupa gambar!", "error");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast("File terlalu besar! Maksimal 5MB.", "error");
+      return;
+    }
+
+    // Show loading state
+    var preview = document.getElementById("imagePreview");
+    if (preview) {
+      preview.classList.remove("hidden");
+      preview.innerHTML =
+        '<div class="image-loading">' +
+          '<div class="spinner"></div>' +
+          '<span>Memproses gambar…</span>' +
+        '</div>';
+    }
+
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      showImagePreview(ev.target.result, file.name, file.size);
+    };
+    reader.onerror = function () {
+      showToast("Gagal membaca file gambar.", "error");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  if (fileInput) {
+    fileInput.addEventListener("change", function (e) {
+      handleFile(e.target.files[0]);
+    });
+  }
+
+  if (dropzone) {
+    ["dragenter", "dragover"].forEach(function (evt) {
+      dropzone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add("is-dragging");
+      });
+    });
+    ["dragleave", "drop"].forEach(function (evt) {
+      dropzone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove("is-dragging");
+      });
+    });
+    dropzone.addEventListener("drop", function (e) {
+      var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      handleFile(file);
+    });
+  }
+}
+
+function showImagePreview(src, fileName, fileSize) {
+  var preview = document.getElementById("imagePreview");
+  var dropzone = document.getElementById("imageDropzone");
+  if (!preview) return;
+
+  var sizeText = "";
+  if (fileSize && typeof fileSize === "number") {
+    sizeText = fileSize > 1024 * 1024
+      ? (fileSize / (1024 * 1024)).toFixed(2) + " MB"
+      : Math.max(1, Math.round(fileSize / 1024)) + " KB";
+  }
+
+  var safeName = (fileName || "foto.jpg")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  preview.classList.remove("hidden");
+  preview.innerHTML =
+    '<img src="' + src + '" alt="Preview">' +
+    '<div class="image-preview-overlay">' +
+      '<div class="image-preview-meta">' +
+        '<span class="meta-name">' + safeName + '</span>' +
+        (sizeText ? '<span class="meta-size">' + sizeText + '</span>' : '') +
+      '</div>' +
+      '<div class="image-preview-actions">' +
+        '<button type="button" class="btn-replace" title="Ganti foto">🔄</button>' +
+        '<button type="button" class="btn-remove"  title="Hapus foto">✕</button>' +
+      '</div>' +
+    '</div>';
+
+  if (dropzone) dropzone.classList.add("has-file");
+
+  var replaceBtn = preview.querySelector(".btn-replace");
+  var removeBtn  = preview.querySelector(".btn-remove");
+  var fileInput  = document.getElementById("taskImage");
+
+  if (replaceBtn) {
+    replaceBtn.addEventListener("click", function () {
+      if (fileInput) fileInput.click();
+    });
+  }
+
+  if (removeBtn) {
+    removeBtn.addEventListener("click", function () {
+      if (fileInput) {
+        fileInput.value = "";
+        fileInput._imageRemoved = true;
+      }
+      preview.innerHTML = "";
+      preview.classList.add("hidden");
+      if (dropzone) dropzone.classList.remove("has-file");
+      showToast("Foto dihapus.", "success");
+    });
+  }
 }
 
 /* =========================================================
@@ -194,6 +606,7 @@ function renderTaskCard(task) {
     san(task.title) +
     "</h3>" +
     descHtml +
+    (task.image ? '<div class="task-card-image"><img src="' + sanitizeHTML(task.image) + '" alt="Lampiran" loading="lazy" data-task-image-id="' + task.id + '"></div>' : '') +
     "</div>" +
     '<div class="flex items-center gap-0.5 shrink-0 task-actions">' +
     '<button class="btn-icon" data-action="edit-task" data-id="' +
@@ -787,14 +1200,55 @@ function closeTaskDetailModal() {
   document.body.style.overflow = "";
 }
 
-// Event delegation untuk card → detail modal
+// Event delegation untuk card → detail modal + image lightbox
 document.addEventListener("click", function (e) {
+  // Lightbox for task image
+  var img = e.target.closest("[data-task-image-id]");
+  if (img) {
+    e.preventDefault();
+    e.stopPropagation();
+    var taskId = img.getAttribute("data-task-image-id");
+    var src = img.getAttribute("src");
+    openImageLightbox(src);
+    return;
+  }
   var card = e.target.closest("[data-task-id]");
   if (!card) return;
   if (e.target.closest("button, input, label, a, [data-action]")) return;
   var id = card.getAttribute("data-task-id");
   if (id) openTaskDetailModal(id);
 });
+
+/* =========================================================
+    IMAGE LIGHTBOX
+    ========================================================= */
+function openImageLightbox(src) {
+  var existing = document.getElementById("imageLightbox");
+  if (existing) existing.remove();
+
+  var overlay = document.createElement("div");
+  overlay.id = "imageLightbox";
+  overlay.className = "lightbox-overlay";
+  overlay.innerHTML =
+    '<div class="lightbox-content">' +
+    '<button id="lightboxCloseBtn" class="lightbox-close-btn" aria-label="Tutup"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+    '<img src="' + sanitizeHTML(src) + '" class="lightbox-image" alt="Lampiran tugas">' +
+    '</div>';
+  document.body.appendChild(overlay);
+  document.body.style.overflow = "hidden";
+
+  var closeBtn = document.getElementById("lightboxCloseBtn");
+  if (closeBtn) closeBtn.addEventListener("click", closeImageLightbox);
+  overlay.addEventListener("click", function (ev) {
+    if (ev.target === overlay) closeImageLightbox();
+  });
+}
+
+function closeImageLightbox() {
+  var lb = document.getElementById("imageLightbox");
+  if (lb) lb.remove();
+  document.body.style.overflow = "";
+}
 
 // ESC tutup semua modal
 document.addEventListener("keydown", function (e) {

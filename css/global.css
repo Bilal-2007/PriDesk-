@@ -1105,3 +1105,225 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8f
     transform: translate(-50%, -50%) rotate(-45deg) !important;
   }
 }
+/* =========================================================
+   IMAGE ATTACHMENT STYLES
+   ========================================================= */
+
+/* --- File Input --- */
+.image-file-label {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.image-file-label:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.image-file-label:has(.form-input-file:focus) {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.form-input-file {
+  display: none;
+}
+.image-file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #2563eb;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  line-height: 1;
+  transition: background 0.2s, transform 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.image-file-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.02);
+}
+.image-file-label span:not(.image-file-btn) {
+  display: inline-block;
+  padding: 8px 4px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* --- Image Input Section --- */
+.image-input-section {
+  margin-top: 4px;
+}
+
+/* --- Preview Area --- */
+.image-preview-area {
+  margin-top: 8px;
+}
+.image-preview-thumb {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.image-preview-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 180px;
+  object-fit: cover;
+}
+.btn-remove-image {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn-remove-image:hover {
+  background: #e11d48;
+  transform: scale(1.1);
+}
+
+/* --- Task Card Image --- */
+.task-card-image {
+  margin-top: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.task-card-image img {
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s;
+}
+.task-card-image:hover img {
+  transform: scale(1.03);
+}
+
+/* --- Lightbox --- */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: lightboxIn 0.25s ease-out;
+}
+.lightbox-overlay.hidden {
+  display: none !important;
+}
+@keyframes lightboxIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.lightbox-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-image {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.lightbox-close-btn {
+  position: absolute;
+  top: -44px;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.lightbox-close-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.1);
+}
+
+/* --- Mobile Responsive for Image Features --- */
+@media (max-width: 768px) {
+  .image-preview-thumb {
+    max-width: 160px;
+  }
+  .task-card-image img {
+    max-height: 140px;
+  }
+  .lightbox-image {
+    max-height: 80vh;
+    border-radius: 8px;
+  }
+  .lightbox-close-btn {
+    top: -48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-input-file {
+    padding: 12px;
+    font-size: 15px;
+  }
+  .image-preview-thumb {
+    max-width: 140px;
+  }
+  .task-card-image {
+    margin-top: 6px;
+  }
+  .task-card-image img {
+    max-height: 120px;
+  }
+  .lightbox-overlay {
+    padding: 12px;
+  }
+  .lightbox-image {
+    max-height: 75vh;
+  }
+}

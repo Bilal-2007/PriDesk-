@@ -14,6 +14,48 @@ function sanitizeHTML(str) {
   });
 }
 
+/* =========================================================
+   IMAGE COMPRESSION (Canvas API)
+   ========================================================= */
+function compressImage(file, maxWidth, maxHeight, quality) {
+  maxWidth = maxWidth || 800;
+  maxHeight = maxHeight || 800;
+  quality = quality || 0.7;
+  return new Promise(function (resolve, reject) {
+    if (!file || !file.type.startsWith('image/')) {
+      return reject(new Error('File bukan gambar yang valid.'));
+    }
+    // Warn if original file is very large
+    if (file.size > 5 * 1024 * 1024) {
+      console.warn('[image] File asli > 5MB (' + Math.round(file.size / 1024 / 1024 * 10) / 10 + 'MB), akan dikompres.');
+    }
+    var reader = new FileReader();
+    reader.onerror = function () { reject(new Error('Gagal membaca file.')); };
+    reader.onload = function (ev) {
+      var img = new Image();
+      img.onerror = function () { reject(new Error('Gambar korup atau tidak bisa dibaca.')); };
+      img.onload = function () {
+        var w = img.naturalWidth;
+        var h = img.naturalHeight;
+        if (w > maxWidth || h > maxHeight) {
+          var ratio = Math.min(maxWidth / w, maxHeight / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function formatDateShort(dateStr) {
   if (!dateStr) return '';
   try {

@@ -123,10 +123,44 @@ function handleTaskFormSubmit(e) {
     return;
   }
 
+  // Handle image: compress if new file, preserve existing if editing, null if removed
+  var imageData = null;
+  var fileInput = document.getElementById('taskImage');
+  var file = fileInput ? fileInput.files[0] : null;
+  var imageRemoved = fileInput && fileInput._imageRemoved;
+
+  if (file) {
+    if (typeof compressImage === 'function') {
+      compressImage(file).then(function(dataUrl) {
+        completeSubmit(taskId, title, course, description, deadline, dataUrl);
+      }).catch(function(err) {
+        showToast('Gagal mengompres gambar: ' + err.message, 'error');
+      });
+      return; // exit early, submit happens in .then()
+    } else {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        completeSubmit(taskId, title, course, description, deadline, ev.target.result);
+      };
+      reader.onerror = function() {
+        showToast('Gagal membaca file gambar.', 'error');
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+  } else if (taskId && !imageRemoved) {
+    var existingTask = AppState.tasks.find(function(t) { return t.id === taskId; });
+    if (existingTask) imageData = existingTask.image || null;
+  }
+
+  completeSubmit(taskId, title, course, description, deadline, imageData);
+}
+
+function completeSubmit(taskId, title, course, description, deadline, imageData) {
   if (taskId) {
-    AppState.tasks = updateTask(AppState.tasks, taskId, { title, course, description, deadline });
+    AppState.tasks = updateTask(AppState.tasks, taskId, { title, course, description, deadline, image: imageData });
   } else {
-    AppState.tasks = addTask(AppState.tasks, { title, course, description, deadline });
+    AppState.tasks = addTask(AppState.tasks, { title, course, description, deadline, image: imageData });
   }
 
   closeTaskModal();

@@ -41,7 +41,8 @@ function addTask(tasks, data) {
     completed: false,
     createdAt: now,
     updatedAt: now,
-    completedAt: null
+    completedAt: null,
+    image: data.image || null
   };
   var list = Array.isArray(tasks) ? tasks.slice() : [];
   list.push(newTask);
