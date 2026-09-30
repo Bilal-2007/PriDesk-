@@ -170,10 +170,63 @@ function completeSubmit(taskId, title, course, description, deadline, imageData)
 }
 
 function handleToggleComplete(taskId, completed) {
-  AppState.tasks = updateTask(AppState.tasks, taskId, { completed });
-  renderCurrentPageContent();
-  refreshDashboard();
-  showToast(completed ? 'Tugas ditandai selesai! 🎉' : 'Tugas dikembalikan ke aktif.', 'success');
+  // ─── UNCHECK: langsung, tanpa animasi ───
+  if (!completed) {
+    AppState.tasks = updateTask(AppState.tasks, taskId, { completed: false });
+    renderCurrentPageContent();
+    refreshDashboard();
+    showToast('Tugas dikembalikan ke aktif.', 'info');
+    return;
+  }
+
+  // ─── CHECK: animasi → update → toast undo ───
+  var cards = document.querySelectorAll('[data-task-id="' + taskId + '"]');
+  var snapshot = JSON.parse(JSON.stringify(AppState.tasks));
+
+  function finalize() {
+    AppState.tasks = updateTask(AppState.tasks, taskId, { completed: true });
+    renderCurrentPageContent();
+    refreshDashboard();
+
+    // Cek apakah semua tugas hari ini udah selesai
+    var todayTasks = typeof getTodayTasks === 'function' ? getTodayTasks(AppState.tasks) : [];
+    var allDoneToday = todayTasks.length > 0 && todayTasks.every(function (t) { return t.completed; });
+    var totalDone = AppState.tasks.filter(function (t) { return t.completed; }).length;
+
+    var msg = allDoneToday
+      ? '🏆 Semua tugas hari ini selesai! Kerja bagus!'
+      : '🎉 Tugas selesai! Total: ' + totalDone;
+
+    // Tampilkan toast dengan tombol Undo (5 detik)
+    if (typeof showToastWithUndo === 'function') {
+      showToastWithUndo(msg, function () {
+        AppState.tasks = snapshot;
+        saveTasks(snapshot);
+        renderCurrentPageContent();
+        refreshDashboard();
+        showToast('Tugas dikembalikan.', 'info');
+      });
+    } else {
+      showToast(msg, 'success');
+    }
+  }
+
+
+// Kalau card nggak ada (dari modal detail), langsung finalize
+if (!cards || cards.length === 0) { finalize(); return; }
+
+// Animasi semua card: checkbox bounce + slide out
+cards.forEach(function (card) {
+  var checkbox = card.querySelector('.task-checkbox-visual');
+  if (checkbox) checkbox.classList.add('just-checked');
+});
+
+setTimeout(function () {
+  cards.forEach(function (card) {
+    card.classList.add('card-completing');
+  });
+  setTimeout(finalize, 600);
+}, 200);
 }
 
 function handleSearchChange(value) { AppState.filters.search = value; renderCurrentPageContent(); }

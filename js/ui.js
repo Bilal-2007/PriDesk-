@@ -28,6 +28,42 @@ function showToast(message, type, duration) {
     }, 300);
   }, duration);
 }
+/* =========================================================
+   TOAST WITH UNDO BUTTON
+   ========================================================= */
+function showToastWithUndo(message, undoCallback, duration) {
+  duration = duration || 5000;
+  var container = document.getElementById("toastContainer");
+  if (!container) return;
+
+  var toast = document.createElement("div");
+  toast.className = "toast toast-success toast-with-undo";
+
+  var msgSpan = document.createElement("span");
+  msgSpan.className = "toast-msg";
+  msgSpan.textContent = typeof sanitizeHTML === "function" ? sanitizeHTML(message) : String(message);
+
+  var undoBtn = document.createElement("button");
+  undoBtn.className = "toast-undo-btn";
+  undoBtn.type = "button";
+  undoBtn.textContent = "Batalkan";
+  undoBtn.onclick = function (e) {
+    e.stopPropagation();
+    if (typeof undoCallback === "function") undoCallback();
+    toast.classList.add("toast-leaving");
+    setTimeout(function () { toast.remove(); }, 300);
+  };
+
+  toast.appendChild(msgSpan);
+  toast.appendChild(undoBtn);
+  container.appendChild(toast);
+
+  setTimeout(function () {
+    if (!toast.parentNode) return;
+    toast.classList.add("toast-leaving");
+    setTimeout(function () { toast.remove(); }, 300);
+  }, duration);
+}
 
 /* =========================================================
    MODAL TASK
@@ -43,10 +79,8 @@ function openTaskModal(task) {
   form.reset();
   var idField = document.getElementById("taskId");
   if (idField) idField.value = "";
-  if (modalTitle)
-    modalTitle.textContent = isEdit ? "Edit Tugas" : "Tambah Tugas Baru";
-  if (submitBtn)
-    submitBtn.textContent = isEdit ? "Simpan Perubahan" : "Tambah Tugas";
+  if (modalTitle) modalTitle.textContent = isEdit ? "Edit Tugas" : "Tambah Tugas Baru";
+  if (submitBtn) submitBtn.textContent = isEdit ? "Simpan Perubahan" : "Tambah Tugas";
 
   if (isEdit) {
     if (idField) idField.value = task.id;
@@ -64,9 +98,8 @@ function openTaskModal(task) {
     if (fp2 && fp2._flatpickr) fp2._flatpickr.clear();
   }
 
-  // Clear image preview when opening modal (fresh state)
+  // ⚡ FIX: Clear + Render preview
   clearImagePreview();
-  // Render image preview section (shows file input; preloads existing image if editing)
   renderImagePreviewSection(isEdit ? task : null);
 
   modal.classList.remove("hidden");
@@ -87,12 +120,15 @@ function closeTaskModal() {
 /* =========================================================
    IMAGE PREVIEW HELPERS (Modal)
    ========================================================= */
+/* =========================================================
+   IMAGE PREVIEW HELPERS (Modal)
+   ========================================================= */
 function clearImagePreview() {
   var preview = document.getElementById("imagePreviewContainer");
-  if (preview) preview.remove();
+  if (preview) preview.innerHTML = "";
   var fileInput = document.getElementById("taskImage");
   if (fileInput) {
-    fileInput._imageRemoved = true;
+    fileInput._imageRemoved = false;
     fileInput.value = "";
   }
 }
@@ -101,394 +137,58 @@ function renderImagePreviewSection(task) {
   var form = document.getElementById("taskForm");
   if (!form) return;
 
-  clearImagePreview();
-
-  // Reset removal flag when modal is opened fresh
-  var fi = document.getElementById("taskImage");
-  if (fi) fi._imageRemoved = false;
-
-  // ====== Inject CSS sekali saja (idempotent) ======
-  if (!document.getElementById("imagePreviewStyles")) {
-    var style = document.createElement("style");
-    style.id = "imagePreviewStyles";
-    style.textContent = `
-      /* ==== Wrapper ==== */
-      .img-upload-wrap {
-        margin-top: 12px;
-        animation: imgFadeIn .35s ease both;
-      }
-      @keyframes imgFadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-
-      .img-upload-label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-      .img-upload-label .label-text {
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #94a3b8;
-      }
-      .img-upload-label .label-badge {
-        font-size: 0.65rem;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #22d3ee, #0ea5e9);
-        color: #04222e;
-        box-shadow: 0 4px 12px rgba(14,165,233,.35);
-      }
-
-      /* ==== Dropzone ==== */
-      .img-dropzone {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 22px 16px;
-        border-radius: 16px;
-        border: 2px dashed rgba(56,189,248,.45);
-        background:
-          radial-gradient(circle at 20% 20%, rgba(56,189,248,.10), transparent 55%),
-          radial-gradient(circle at 80% 80%, rgba(168,85,247,.10), transparent 55%),
-          rgba(15, 23, 42, 0.35);
-        cursor: pointer;
-        transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease;
-        overflow: hidden;
-      }
-      .img-dropzone::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.06) 50%, transparent 70%);
-        transform: translateX(-100%);
-        transition: transform .8s ease;
-        pointer-events: none;
-      }
-      .img-dropzone:hover::before { transform: translateX(100%); }
-      .img-dropzone:hover {
-        border-color: #38bdf8;
-        background:
-          radial-gradient(circle at 20% 20%, rgba(56,189,248,.18), transparent 55%),
-          radial-gradient(circle at 80% 80%, rgba(168,85,247,.18), transparent 55%),
-          rgba(15, 23, 42, 0.5);
-        transform: translateY(-2px);
-        box-shadow: 0 14px 32px rgba(56,189,248,.18);
-      }
-      .img-dropzone.is-dragging {
-        border-color: #22d3ee;
-        background:
-          radial-gradient(circle at 50% 50%, rgba(34,211,238,.25), transparent 60%),
-          rgba(15, 23, 42, 0.6);
-        transform: scale(1.015);
-        box-shadow: 0 18px 42px rgba(34,211,238,.35);
-      }
-      .img-dropzone.has-file {
-        padding: 0;
-        border-style: solid;
-        border-color: rgba(56,189,248,.35);
-        cursor: default;
-      }
-
-      .img-dropzone .dz-icon {
-        font-size: 1.8rem;
-        line-height: 1;
-        filter: drop-shadow(0 6px 14px rgba(56,189,248,.5));
-        animation: dzFloat 3s ease-in-out infinite;
-      }
-      @keyframes dzFloat {
-        0%, 100% { transform: translateY(0); }
-        50%      { transform: translateY(-4px); }
-      }
-      .img-dropzone .dz-title {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #e2e8f0;
-      }
-      .img-dropzone .dz-sub {
-        font-size: 0.7rem;
-        color: #94a3b8;
-      }
-
-      .img-file-input { display: none; }
-
-      /* ==== Preview area ==== */
-      .image-preview-area {
-        margin-top: 12px;
-        position: relative;
-        border-radius: 16px;
-        overflow: hidden;
-        animation: previewPop .4s cubic-bezier(.2,.9,.3,1.4) both;
-      }
-      @keyframes previewPop {
-        from { opacity: 0; transform: scale(.94); }
-        to   { opacity: 1; transform: scale(1); }
-      }
-
-      .image-preview-area img {
-        display: block;
-        width: 100%;
-        max-height: 240px;
-        object-fit: cover;
-        border-radius: 16px;
-        transition: transform .5s ease;
-      }
-      .image-preview-area:hover img { transform: scale(1.03); }
-
-      .image-preview-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 12px;
-        background: linear-gradient(to top, rgba(2,6,23,.85), transparent 55%);
-        opacity: 0;
-        transition: opacity .3s ease;
-        border-radius: 16px;
-      }
-      .image-preview-area:hover .image-preview-overlay { opacity: 1; }
-
-      .image-preview-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        min-width: 0;
-      }
-      .image-preview-meta .meta-name {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #f1f5f9;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 220px;
-      }
-      .image-preview-meta .meta-size {
-        font-size: 0.65rem;
-        color: #94a3b8;
-      }
-
-      .image-preview-actions {
-        display: flex;
-        gap: 6px;
-      }
-      .image-preview-actions button {
-        width: 32px;
-        height: 32px;
-        display: grid;
-        place-items: center;
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,.15);
-        background: rgba(15,23,42,.7);
-        color: #f1f5f9;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: transform .2s ease, background .2s ease, border-color .2s ease;
-        backdrop-filter: blur(6px);
-      }
-      .image-preview-actions button:hover {
-        transform: translateY(-2px);
-        background: rgba(15,23,42,.95);
-      }
-      .image-preview-actions .btn-replace:hover { border-color: #38bdf8; color: #38bdf8; }
-      .image-preview-actions .btn-remove:hover  { border-color: #ef4444; color: #ef4444; }
-
-      /* ==== Loading skeleton ==== */
-      .image-loading {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 26px 16px;
-        border-radius: 16px;
-        background: rgba(15,23,42,.45);
-        border: 1px solid rgba(56,189,248,.2);
-      }
-      .image-loading .spinner {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: 3px solid rgba(56,189,248,.25);
-        border-top-color: #38bdf8;
-        animation: spin .8s linear infinite;
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      .image-loading span {
-        font-size: 0.72rem;
-        color: #94a3b8;
-        font-weight: 600;
-      }
-
-      .hidden { display: none !important; }
-    `;
-    document.head.appendChild(style);
+  // Buat container kalau belum ada
+  var container = document.getElementById("imagePreviewContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "imagePreviewContainer";
+    var footer = form.querySelector(".flex.items-center.justify-end");
+    if (footer) form.insertBefore(container, footer);
+    else form.appendChild(container);
   }
 
-  // ====== Build wrapper ======
-  var container = document.createElement("div");
-  container.id = "imagePreviewContainer";
-  container.className = "img-upload-wrap";
-  container.innerHTML = `
-    <div class="img-upload-label">
-      <span class="label-text">📎 Lampiran Foto (Opsional)</span>
-      <span class="label-badge">Max 5MB</span>
-    </div>
-
-    <label class="img-dropzone" id="imageDropzone" for="taskImage">
-      <input type="file" id="taskImage" accept="image/*" class="img-file-input">
-      <div class="dz-icon">📷</div>
-      <div class="dz-title">Klik atau seret foto ke sini</div>
-      <div class="dz-sub">JPG · PNG · WebP — otomatis dikompres</div>
-    </label>
-
-    <div id="imagePreview" class="image-preview-area hidden"></div>
-  `;
-
-  // Insert before action buttons
-  var btnDiv = form.querySelector('.flex.items-center.justify-end');
-  if (btnDiv) {
-    btnDiv.parentNode.insertBefore(container, btnDiv);
-  } else {
-    form.appendChild(container);
-  }
-
-  // ====== Show existing image if editing ======
-  if (task && task.image) {
-    showImagePreview(task.image, task.imageName || "Foto tersimpan", null);
-  }
-
-  // ====== Wire up file input + drag & drop ======
   var fileInput = document.getElementById("taskImage");
-  var dropzone  = document.getElementById("imageDropzone");
+  var file = fileInput && fileInput.files[0];
+  var imageRemoved = fileInput && fileInput._imageRemoved;
+  var existingImage = task && task.image && !imageRemoved ? task.image : null;
 
-  function handleFile(file) {
-    if (!file) return;
+  var imgSrc = null;
+  if (file) imgSrc = URL.createObjectURL(file);
+  else if (existingImage) imgSrc = existingImage;
 
-    if (!file.type || !file.type.startsWith("image/")) {
-      showToast("File harus berupa gambar!", "error");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      showToast("File terlalu besar! Maksimal 5MB.", "error");
-      return;
-    }
+  var html = '<div class="image-preview-label">Preview Foto</div>';
 
-    // Show loading state
-    var preview = document.getElementById("imagePreview");
-    if (preview) {
-      preview.classList.remove("hidden");
-      preview.innerHTML =
-        '<div class="image-loading">' +
-          '<div class="spinner"></div>' +
-          '<span>Memproses gambar…</span>' +
-        '</div>';
-    }
-
-    var reader = new FileReader();
-    reader.onload = function (ev) {
-      showImagePreview(ev.target.result, file.name, file.size);
-    };
-    reader.onerror = function () {
-      showToast("Gagal membaca file gambar.", "error");
-    };
-    reader.readAsDataURL(file);
+  if (imgSrc) {
+    html += '<div class="image-preview-item">';
+    html += '<img src="' + imgSrc + '" alt="Preview lampiran">';
+    html += '<button type="button" class="image-preview-remove" data-action="remove-image" title="Hapus foto">';
+    html += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    html += '</button>';
+    html += '</div>';
+  } else {
+    html += '<div class="image-preview-empty">';
+    html += '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+    html += '<span>Belum ada foto dipilih</span>';
+    html += '</div>';
   }
 
-  if (fileInput) {
-    fileInput.addEventListener("change", function (e) {
-      handleFile(e.target.files[0]);
-    });
-  }
+  container.innerHTML = html;
 
-  if (dropzone) {
-    ["dragenter", "dragover"].forEach(function (evt) {
-      dropzone.addEventListener(evt, function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.add("is-dragging");
-      });
-    });
-    ["dragleave", "drop"].forEach(function (evt) {
-      dropzone.addEventListener(evt, function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.remove("is-dragging");
-      });
-    });
-    dropzone.addEventListener("drop", function (e) {
-      var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      handleFile(file);
-    });
-  }
-}
-
-function showImagePreview(src, fileName, fileSize) {
-  var preview = document.getElementById("imagePreview");
-  var dropzone = document.getElementById("imageDropzone");
-  if (!preview) return;
-
-  var sizeText = "";
-  if (fileSize && typeof fileSize === "number") {
-    sizeText = fileSize > 1024 * 1024
-      ? (fileSize / (1024 * 1024)).toFixed(2) + " MB"
-      : Math.max(1, Math.round(fileSize / 1024)) + " KB";
-  }
-
-  var safeName = (fileName || "foto.jpg")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-
-  preview.classList.remove("hidden");
-  preview.innerHTML =
-    '<img src="' + src + '" alt="Preview">' +
-    '<div class="image-preview-overlay">' +
-      '<div class="image-preview-meta">' +
-        '<span class="meta-name">' + safeName + '</span>' +
-        (sizeText ? '<span class="meta-size">' + sizeText + '</span>' : '') +
-      '</div>' +
-      '<div class="image-preview-actions">' +
-        '<button type="button" class="btn-replace" title="Ganti foto">🔄</button>' +
-        '<button type="button" class="btn-remove"  title="Hapus foto">✕</button>' +
-      '</div>' +
-    '</div>';
-
-  if (dropzone) dropzone.classList.add("has-file");
-
-  var replaceBtn = preview.querySelector(".btn-replace");
-  var removeBtn  = preview.querySelector(".btn-remove");
-  var fileInput  = document.getElementById("taskImage");
-
-  if (replaceBtn) {
-    replaceBtn.addEventListener("click", function () {
-      if (fileInput) fileInput.click();
-    });
-  }
-
+  var removeBtn = container.querySelector('[data-action="remove-image"]');
   if (removeBtn) {
-    removeBtn.addEventListener("click", function () {
+    removeBtn.onclick = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (fileInput) {
         fileInput.value = "";
         fileInput._imageRemoved = true;
       }
-      preview.innerHTML = "";
-      preview.classList.add("hidden");
-      if (dropzone) dropzone.classList.remove("has-file");
-      showToast("Foto dihapus.", "success");
-    });
+      renderImagePreviewSection(task);
+    };
   }
 }
+
+
 
 /* =========================================================
    MODAL KONFIRMASI
@@ -526,107 +226,65 @@ function closeConfirmModal() {
    RENDER TASK CARD
    ========================================================= */
 function renderTaskCard(task) {
-  var status =
-    typeof getDeadlineStatus === "function"
-      ? getDeadlineStatus(task.deadline, task.completed)
-      : {
-          label: "Tanpa Deadline",
-          emoji: "📋",
-          colorClass: "status-none",
-          isOverdue: false,
-        };
+  var status = typeof getDeadlineStatus === "function"
+    ? getDeadlineStatus(task.deadline, task.completed)
+    : { label: "Tanpa Deadline", emoji: "📋", colorClass: "status-none", isOverdue: false };
 
-  var san =
-    typeof sanitizeHTML === "function"
-      ? sanitizeHTML
-      : function (s) {
-          return s;
-        };
-  var fmtFn =
-    typeof formatDateShort === "function"
-      ? formatDateShort
-      : function (d) {
-          return d;
-        };
+  var san = typeof sanitizeHTML === "function" ? sanitizeHTML : function (s) { return s; };
+  var fmtFn = typeof formatDateShort === "function" ? formatDateShort : function (d) { return d; };
 
-  var titleClass = task.completed
-    ? "line-through text-slate-400"
-    : "text-slate-900";
-  var cardClass = task.completed
-    ? "task-card completed-card"
-    : status.isOverdue
-      ? "task-card overdue-card"
-      : "task-card";
+  var titleClass = task.completed ? "line-through text-slate-400" : "text-slate-900";
+  var cardClass = task.completed ? "task-card completed-card"
+    : status.isOverdue ? "task-card overdue-card"
+    : "task-card";
 
   var deadlineHtml = task.deadline
-    ? '<span class="deadline-badge ' +
-      status.colorClass +
-      '">' +
-      status.emoji +
-      " " +
-      san(status.label) +
-      " · " +
-      fmtFn(task.deadline) +
-      "</span>"
+    ? '<span class="deadline-badge ' + status.colorClass + '">' + status.emoji + " " + san(status.label) + " · " + fmtFn(task.deadline) + "</span>"
     : '<span class="deadline-badge status-none">📋 Tanpa Deadline</span>';
 
   var descHtml = task.description
-    ? '<p class="text-xs text-slate-500 mt-1.5 line-clamp-2">' +
-      san(task.description) +
-      "</p>"
+    ? '<p class="text-xs text-slate-500 mt-1.5 line-clamp-2">' + san(task.description) + "</p>"
     : "";
 
   var courseHtml = task.course
-    ? '<span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">' +
-      san(task.course) +
-      "</span>"
+    ? '<span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">' + san(task.course) + "</span>"
+    : "";
+
+  // ⚡ BADGE FOTO — pengganti preview
+  var imageBadgeHtml = task.image
+    ? '<span class="task-image-badge" title="Ada Lampiran Foto">' +
+        '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+          '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>' +
+          '<circle cx="8.5" cy="8.5" r="1.5"/>' +
+          '<polyline points="21 15 16 10 5 21"/>' +
+        '</svg>' +
+        '<span>Foto</span>' +
+      '</span>'
     : "";
 
   return (
-    '<div class="' +
-    cardClass +
-    '" data-task-id="' +
-    task.id +
-    '">' +
-    '<div class="flex items-start gap-3">' +
-    '<label class="task-checkbox-wrapper mt-0.5">' +
-    '<input type="checkbox" class="task-complete-checkbox" data-id="' +
-    task.id +
-    '"' +
-    (task.completed ? " checked" : "") +
-    ">" +
-    '<div class="task-checkbox-visual"></div>' +
-    "</label>" +
-    '<div class="flex-1 min-w-0">' +
-    '<div class="flex flex-wrap items-start justify-between gap-2">' +
-    '<div class="flex-1 min-w-0">' +
-    '<h3 class="text-sm font-semibold ' +
-    titleClass +
-    ' leading-snug break-words">' +
-    san(task.title) +
-    "</h3>" +
-    descHtml +
-    (task.image ? '<div class="task-card-image"><img src="' + sanitizeHTML(task.image) + '" alt="Lampiran" loading="lazy" data-task-image-id="' + task.id + '"></div>' : '') +
-    "</div>" +
-    '<div class="flex items-center gap-0.5 shrink-0 task-actions">' +
-    '<button class="btn-icon" data-action="edit-task" data-id="' +
-    task.id +
-    '"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
-    '<button class="btn-icon" data-action="duplicate-task" data-id="' +
-    task.id +
-    '"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>' +
-    '<button class="btn-icon btn-icon-danger" data-action="delete-task" data-id="' +
-    task.id +
-    '"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>' +
-    "</div>" +
-    "</div>" +
-    '<div class="flex flex-wrap items-center gap-2 mt-2">' +
-    courseHtml +
-    deadlineHtml +
-    "</div>" +
-    "</div>" +
-    "</div>" +
-    "</div>"
+    '<div class="' + cardClass + '" data-task-id="' + task.id + '">' +
+      '<div class="flex items-start gap-3">' +
+        '<label class="task-checkbox-wrapper mt-0.5">' +
+          '<input type="checkbox" class="task-complete-checkbox" data-id="' + task.id + '"' + (task.completed ? " checked" : "") + '>' +
+          '<div class="task-checkbox-visual"></div>' +
+        '</label>' +
+        '<div class="flex-1 min-w-0">' +
+          '<div class="flex flex-wrap items-start justify-between gap-2">' +
+            '<div class="flex-1 min-w-0">' +
+              '<h3 class="text-sm font-semibold ' + titleClass + ' leading-snug break-words">' + san(task.title) + '</h3>' +
+              descHtml +
+            '</div>' +
+            '<div class="flex items-center gap-0.5 shrink-0 task-actions">' +
+              '<button class="btn-icon" data-action="edit-task" data-id="' + task.id + '"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+              '<button class="btn-icon" data-action="duplicate-task" data-id="' + task.id + '"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>' +
+              '<button class="btn-icon btn-icon-danger" data-action="delete-task" data-id="' + task.id + '"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex flex-wrap items-center gap-2 mt-2">' + courseHtml + deadlineHtml + imageBadgeHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
   );
 }
 
@@ -1036,107 +694,122 @@ function closeMobileSidebar() {
 function openTaskDetailModal(taskId) {
   if (!taskId) return;
   var tasks = typeof loadTasks === "function" ? loadTasks() : [];
-  var task = tasks.find(function (t) {
-    return t.id === taskId;
-  });
+  var task = tasks.find(function (t) { return t.id === taskId; });
   if (!task) return;
 
   var modal = document.getElementById("taskDetailModal");
   if (!modal) return;
 
-  var san =
-    typeof sanitizeHTML === "function"
-      ? sanitizeHTML
-      : function (s) {
-          return s;
-        };
-  var status =
-    typeof getDeadlineStatus === "function"
-      ? getDeadlineStatus(task.deadline, task.completed)
-      : { label: "Tanpa Deadline", emoji: "📋", colorClass: "status-none" };
+  var san = typeof sanitizeHTML === "function" ? sanitizeHTML : function (s) { return s; };
+  var status = typeof getDeadlineStatus === "function"
+    ? getDeadlineStatus(task.deadline, task.completed)
+    : { label: "Tanpa Deadline", emoji: "📋", colorClass: "status-none" };
 
+  // ─── TITLE ───
   var titleEl = document.getElementById("detailModalTitle");
   if (titleEl) titleEl.textContent = task.title || "(Tanpa judul)";
 
+  // ─── BADGES ───
   var badgesEl = document.getElementById("detailModalBadges");
   if (badgesEl) {
     var badges = [];
-    if (task.course)
+    if (task.course) {
       badges.push(
         '<span class="text-xs font-medium text-slate-700 bg-slate-100 px-3 py-1 rounded-lg">' +
           san(task.course) +
-          "</span>",
+        '</span>'
       );
+    }
     badges.push(
-      '<span class="deadline-badge ' +
-        status.colorClass +
-        '">' +
-        status.emoji +
-        " " +
-        status.label +
-        "</span>",
+      '<span class="deadline-badge ' + status.colorClass + '">' +
+        status.emoji + ' ' + status.label +
+      '</span>'
     );
-    if (task.completed)
+    if (task.completed) {
       badges.push('<span class="deadline-badge status-done">✅ Selesai</span>');
+    }
     badgesEl.innerHTML = badges.join("");
   }
 
-var bodyEl = document.getElementById('detailModalBody');
-if (bodyEl) {
-  var parts = [];
+  // ─── BODY ───
+  var bodyEl = document.getElementById("detailModalBody");
+  if (bodyEl) {
+    var parts = [];
 
-  // Tenggat waktu + waktu sisa
-  var deadlineFormatted = task.deadline
-    ? formatDateIndonesian(task.deadline)
-    : 'Tidak ada deadline';
-  var timeInfo = task.deadline ? getTimeRemaining(task.deadline) : null;
-  var timeBadge = '';
-  if (timeInfo && !task.completed) {
-    var cls = timeInfo.isLate ? 'detail-time-late' : 'detail-time-ok';
-    timeBadge = '<div class="detail-time-badge ' + cls + '">' +
-      (timeInfo.isLate ? '⏰ ' : '⏳ ') + san(timeInfo.label) +
-    '</div>';
-  }
-  parts.push(
-    '<div class="detail-section">' +
-      '<div class="detail-label">Tenggat Waktu</div>' +
-      '<div class="detail-value">' + san(deadlineFormatted) + '</div>' +
-      timeBadge +
-    '</div>'
-  );
-
-  // Deskripsi
-  if (task.description) {
+    // 1. Tenggat Waktu + waktu sisa
+    var deadlineFormatted = task.deadline
+      ? (typeof formatDateIndonesian === "function" ? formatDateIndonesian(task.deadline) : task.deadline)
+      : "Tidak ada deadline";
+    var timeInfo = task.deadline && typeof getTimeRemaining === "function"
+      ? getTimeRemaining(task.deadline)
+      : null;
+    var timeBadge = "";
+    if (timeInfo && !task.completed) {
+      var cls = timeInfo.isLate ? "detail-time-late" : "detail-time-ok";
+      timeBadge =
+        '<div class="detail-time-badge ' + cls + '">' +
+          (timeInfo.isLate ? "⏰ " : "⏳ ") + san(timeInfo.label) +
+        '</div>';
+    }
     parts.push(
       '<div class="detail-section">' +
-        '<div class="detail-label">Deskripsi</div>' +
-        '<div class="detail-value">' + san(task.description) + '</div>' +
+        '<div class="detail-label">Tenggat Waktu</div>' +
+        '<div class="detail-value">' + san(deadlineFormatted) + '</div>' +
+        timeBadge +
       '</div>'
     );
-  }
 
-  // Dibuat
-  parts.push(
-    '<div class="detail-section">' +
-      '<div class="detail-label">Dibuat</div>' +
-      '<div class="detail-value text-sm">' + (task.createdAt || '—') + '</div>' +
-    '</div>'
-  );
+    // 2. Lampiran Foto (thumbnail + hint)
+    if (task.image) {
+      parts.push(
+        '<div class="detail-section">' +
+          '<div class="detail-label">Lampiran Foto</div>' +
+          '<div class="detail-image-wrap" data-task-image-id="' + san(task.id) + '">' +
+            '<img src="' + task.image + '" class="detail-image" alt="Lampiran tugas" loading="lazy">' +
+            '<div class="detail-image-hint">' +
+              '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                '<circle cx="11" cy="11" r="8"/>' +
+                '<line x1="21" y1="21" x2="16.65" y2="16.65"/>' +
+              '</svg>' +
+              '<span>Klik gambar untuk memperbesar</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
 
-  // Diselesaikan (kalau ada)
-  if (task.completed && task.completedAt) {
+    // 3. Deskripsi
+    if (task.description) {
+      parts.push(
+        '<div class="detail-section">' +
+          '<div class="detail-label">Deskripsi</div>' +
+          '<div class="detail-value">' + san(task.description) + '</div>' +
+        '</div>'
+      );
+    }
+
+    // 4. Dibuat
     parts.push(
       '<div class="detail-section">' +
-        '<div class="detail-label">Diselesaikan</div>' +
-        '<div class="detail-value text-sm">' + task.completedAt + '</div>' +
+        '<div class="detail-label">Dibuat</div>' +
+        '<div class="detail-value text-sm">' + (task.createdAt || "—") + '</div>' +
       '</div>'
     );
+
+    // 5. Diselesaikan (kalau ada)
+    if (task.completed && task.completedAt) {
+      parts.push(
+        '<div class="detail-section">' +
+          '<div class="detail-label">Diselesaikan</div>' +
+          '<div class="detail-value text-sm">' + task.completedAt + '</div>' +
+        '</div>'
+      );
+    }
+
+    bodyEl.innerHTML = parts.join("");
   }
 
-  // ⚡ INI YANG HILANG — render ke DOM
-  bodyEl.innerHTML = parts.join('');
-}
-
+  // ─── FOOTER BUTTONS ───
   var toggleBtn = document.getElementById("detailToggleBtn");
   var editBtn = document.getElementById("detailEditBtn");
   var deleteBtn = document.getElementById("detailDeleteBtn");
@@ -1149,47 +822,47 @@ if (bodyEl) {
     toggleBtn.onclick = function () {
       closeTaskDetailModal();
       var all = loadTasks();
-      var t = all.find(function (x) {
-        return x.id === taskId;
-      });
+      var t = all.find(function (x) { return x.id === taskId; });
       if (!t) return;
       t.completed = !t.completed;
       t.completedAt = t.completed ? new Date().toISOString() : null;
       saveTasks(all);
       if (window.AppState) window.AppState.tasks = all;
-      if (typeof renderCurrentPageContent === "function")
-        renderCurrentPageContent();
+      if (typeof renderCurrentPageContent === "function") renderCurrentPageContent();
       showToast(
         t.completed ? "Tugas selesai! 🎉" : "Tugas dikembalikan aktif.",
-        "success",
+        "success"
       );
     };
   }
-  if (editBtn)
+
+  if (editBtn) {
     editBtn.onclick = function () {
       closeTaskDetailModal();
       openTaskModal(task);
     };
-  if (deleteBtn)
+  }
+
+  if (deleteBtn) {
     deleteBtn.onclick = function () {
       closeTaskDetailModal();
       openConfirmModal(
         "Hapus Tugas?",
         "Tugas ini akan dihapus permanen.",
         function () {
-          var all = loadTasks().filter(function (t) {
-            return t.id !== taskId;
-          });
+          var all = loadTasks().filter(function (t) { return t.id !== taskId; });
           saveTasks(all);
           if (window.AppState) window.AppState.tasks = all;
-          if (typeof renderCurrentPageContent === "function")
-            renderCurrentPageContent();
+          if (typeof renderCurrentPageContent === "function") renderCurrentPageContent();
           showToast("Tugas dihapus.", "success");
-        },
+        }
       );
     };
+  }
+
   if (closeBtn) closeBtn.onclick = closeTaskDetailModal;
 
+  // ─── SHOW MODAL ───
   modal.classList.remove("hidden");
   document.body.style.overflow = "hidden";
 }
@@ -1201,15 +874,16 @@ function closeTaskDetailModal() {
 }
 
 // Event delegation untuk card → detail modal + image lightbox
+// Event delegation untuk card → detail modal + image lightbox
 document.addEventListener("click", function (e) {
-  // Lightbox for task image
-  var img = e.target.closest("[data-task-image-id]");
-  if (img) {
+  // ⚡ Lightbox untuk foto
+  var imgWrap = e.target.closest("[data-task-image-id]");
+  if (imgWrap) {
     e.preventDefault();
     e.stopPropagation();
-    var taskId = img.getAttribute("data-task-image-id");
-    var src = img.getAttribute("src");
-    openImageLightbox(src);
+    var realImg = imgWrap.tagName === "IMG" ? imgWrap : imgWrap.querySelector("img");
+    var src = realImg ? realImg.src : null;
+    if (src) openImageLightbox(src);
     return;
   }
   var card = e.target.closest("[data-task-id]");
@@ -1223,32 +897,92 @@ document.addEventListener("click", function (e) {
     IMAGE LIGHTBOX
     ========================================================= */
 function openImageLightbox(src) {
+  if (!src) return;
   var existing = document.getElementById("imageLightbox");
   if (existing) existing.remove();
 
+  // Overlay
   var overlay = document.createElement("div");
   overlay.id = "imageLightbox";
   overlay.className = "lightbox-overlay";
-  overlay.innerHTML =
-    '<div class="lightbox-content">' +
-    '<button id="lightboxCloseBtn" class="lightbox-close-btn" aria-label="Tutup"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
-    '<img src="' + sanitizeHTML(src) + '" class="lightbox-image" alt="Lampiran tugas">' +
-    '</div>';
+
+  // Content wrapper
+  var content = document.createElement("div");
+  content.className = "lightbox-content";
+
+  // Close button
+  var closeBtn = document.createElement("button");
+  closeBtn.id = "lightboxCloseBtn";
+  closeBtn.className = "lightbox-close-btn";
+  closeBtn.setAttribute("aria-label", "Tutup");
+  closeBtn.innerHTML =
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+      '<line x1="18" y1="6" x2="6" y2="18"/>' +
+      '<line x1="6" y1="6" x2="18" y2="18"/>' +
+    '</svg>';
+
+  // Download button
+  var dlBtn = document.createElement("a");
+  dlBtn.id = "lightboxDownloadBtn";
+  dlBtn.className = "lightbox-download-btn";
+  dlBtn.setAttribute("download", "lampiran-pridesk.jpg");
+  dlBtn.setAttribute("aria-label", "Download Gambar");
+  dlBtn.setAttribute("title", "Download gambar");
+  dlBtn.href = src;
+  dlBtn.innerHTML =
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>' +
+    '</svg>';
+
+  // Image — pakai setAttribute biar src-nya valid
+  var img = document.createElement("img");
+  img.className = "lightbox-image";
+  img.alt = "Lampiran tugas";
+  img.src = src;
+
+  // Kalau gambar gagal load, tampilkan pesan
+  img.onerror = function () {
+    img.style.display = "none";
+    var err = document.createElement("div");
+    err.className = "lightbox-error";
+    err.textContent = "Gambar tidak bisa dimuat";
+    content.appendChild(err);
+  };
+
+  content.appendChild(img);
+  overlay.appendChild(closeBtn);
+  overlay.appendChild(dlBtn);
+  overlay.appendChild(content);
   document.body.appendChild(overlay);
   document.body.style.overflow = "hidden";
 
-  var closeBtn = document.getElementById("lightboxCloseBtn");
-  if (closeBtn) closeBtn.addEventListener("click", closeImageLightbox);
+  // Event handlers
+  closeBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    closeImageLightbox();
+  });
+
   overlay.addEventListener("click", function (ev) {
     if (ev.target === overlay) closeImageLightbox();
   });
+
+  document.addEventListener("keydown", lightboxEscHandler);
+}
+
+function lightboxEscHandler(e) {
+  if (e.key === "Escape") {
+    closeImageLightbox();
+    document.removeEventListener("keydown", lightboxEscHandler);
+  }
 }
 
 function closeImageLightbox() {
   var lb = document.getElementById("imageLightbox");
   if (lb) lb.remove();
   document.body.style.overflow = "";
+  document.removeEventListener("keydown", lightboxEscHandler);
 }
+
 
 // ESC tutup semua modal
 document.addEventListener("keydown", function (e) {

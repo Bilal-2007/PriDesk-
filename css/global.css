@@ -1327,3 +1327,478 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #f8f
     max-height: 75vh;
   }
 }
+
+
+/* =========================================================
+   TASK IMAGE BADGE — Badge "Foto" di Card Tugas
+   ========================================================= */
+.task-image-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  color: #6d28d9;
+  border: 1px solid #c4b5fd;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+}
+.task-image-badge:hover {
+  background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   IMAGE PREVIEW — Di Form Modal (Tambah/Edit)
+   ========================================================= */
+#imagePreviewContainer {
+  padding: 14px 0 4px;
+}
+
+.image-preview-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.image-preview-item {
+  position: relative;
+  display: inline-block;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 6px 18px -6px rgba(15, 23, 42, 0.15);
+  max-width: 100%;
+  transition: all 0.25s ease;
+}
+
+.image-preview-item:hover {
+  border-color: #a7f3d0;
+  box-shadow: 0 10px 24px -8px rgba(16, 185, 129, 0.3);
+}
+
+.image-preview-item img {
+  display: block;
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.image-preview-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.image-preview-remove:hover {
+  background: #e11d48;
+  transform: scale(1.12) rotate(90deg);
+}
+
+.image-preview-remove:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+.image-preview-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 16px;
+  border-radius: 12px;
+  border: 1.5px dashed #cbd5e1;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.image-preview-empty:hover {
+  border-color: #c4b5fd;
+  background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+  color: #8b5cf6;
+}
+
+/* =========================================================
+   THUMBNAIL DI DETAIL MODAL
+   ========================================================= */
+.detail-image-wrap {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: zoom-in;
+  transition: all 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+  box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+}
+
+.detail-image-wrap:hover {
+  border-color: #a7f3d0;
+  box-shadow: 0 12px 28px -12px rgba(16, 185, 129, 0.35);
+  transform: translateY(-2px);
+}
+
+.detail-image-wrap:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.detail-image {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.detail-image-wrap:hover .detail-image {
+  transform: scale(1.02);
+}
+
+.detail-image-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.85));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  transition: all 0.2s ease;
+}
+
+.detail-image-hint svg {
+  flex-shrink: 0;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.1); }
+}
+
+/* =========================================================
+   LIGHTBOX FULLSCREEN
+   ========================================================= */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: lbFadeIn 0.25s ease;
+  cursor: zoom-out;
+}
+
+@keyframes lbFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  animation: lbScaleIn 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes lbScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.lightbox-close-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.lightbox-close-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1) rotate(90deg);
+}
+
+.lightbox-close-btn:active {
+  transform: scale(0.92) rotate(90deg);
+}
+
+/* =========================================================
+   MOBILE — Optimasi Lightbox & Thumbnail
+   ========================================================= */
+@media (max-width: 640px) {
+  .lightbox-overlay {
+    padding: 8px;
+  }
+
+  .lightbox-image {
+    max-height: 85vh;
+    border-radius: 10px;
+  }
+
+  .lightbox-close-btn {
+    top: 14px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .detail-image {
+    max-height: 180px;
+  }
+
+  .image-preview-item img {
+    max-height: 160px;
+  }
+
+  .detail-image-hint {
+    font-size: 0.7rem;
+    padding: 8px 12px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .lightbox-overlay,
+  .lightbox-image,
+  .detail-image-hint svg {
+    animation: none !important;
+  }
+  .detail-image-wrap,
+  .detail-image,
+  .image-preview-item,
+  .lightbox-close-btn {
+    transition: none !important;
+  }
+}
+
+/* Tombol Download di Lightbox */
+.lightbox-download-btn {
+  position: fixed;
+  top: 20px;
+  right: 80px;   /* di samping tombol close */
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+}
+
+.lightbox-download-btn:hover {
+  background: rgba(16, 185, 129, 0.35);
+  border-color: rgba(16, 185, 129, 0.6);
+  transform: scale(1.1);
+}
+
+.lightbox-download-btn:active {
+  transform: scale(0.92);
+}
+
+/* Error message di lightbox */
+.lightbox-error {
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 24px 32px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* Mobile — tombol download lebih rapat */
+@media (max-width: 640px) {
+  .lightbox-download-btn {
+    top: 14px;
+    right: 68px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* =========================================================
+   ANIMASI SELESAI TUGAS
+   ========================================================= */
+
+/* Checkbox bounce saat pertama di-centang */
+.task-checkbox-visual.just-checked {
+  animation: checkboxBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes checkboxBounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Card slide out + fade */
+.task-card.card-completing,
+.today-task-card.card-completing,
+.completed-task-card.card-completing {
+  animation: cardCompleteOut 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes cardCompleteOut {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+    max-height: 300px;
+  }
+  40% {
+    transform: translateX(8px);
+    opacity: 1;
+    max-height: 300px;
+  }
+  70% {
+    transform: translateX(24px);
+    opacity: 0.5;
+    max-height: 300px;
+  }
+  100% {
+    transform: translateX(60px);
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* =========================================================
+   TOAST WITH UNDO BUTTON
+   ========================================================= */
+.toast-with-undo {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px !important;
+  min-width: 280px !important;
+}
+
+.toast-with-undo .toast-msg {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.toast-undo-btn {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.toast-undo-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: scale(1.05);
+}
+
+.toast-undo-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .toast-with-undo {
+    min-width: 0 !important;
+    padding: 12px !important;
+  }
+  .toast-undo-btn {
+    padding: 6px 10px;
+    font-size: 11.5px;
+  }
+}
